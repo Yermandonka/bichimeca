@@ -196,9 +196,10 @@ export function LessonRunner({ lesson }: { lesson: Lesson }) {
   }
 
   if (phase === "intro") {
-    const guides = lesson.introducedKeys
-      .map((key) => ({ key, guidance: keyGuidance(key) }))
-      .filter((entry) => entry.guidance !== null);
+    const guides = lesson.introducedKeys.flatMap((key) => {
+      const guidance = keyGuidance(key);
+      return guidance ? [{ key, guidance }] : [];
+    });
     return (
       <section className="mx-auto mt-8 max-w-2xl rounded-3xl border-2 border-brand-100 bg-noche-900 p-8 shadow-[6px_6px_0_rgba(0,0,0,0.35)]">
         {guides.length > 0 && (
@@ -214,16 +215,16 @@ export function LessonRunner({ lesson }: { lesson: Lesson }) {
                   </span>
                   <div>
                     <p className="font-bold">
-                      {guidance!.fingerLabel}
+                      {guidance.fingerLabel}
                       <span className="font-normal text-ink-600">
                         {" "}
                         ·{" "}
-                        {guidance!.hand === "las dos"
+                        {guidance.hand === "las dos"
                           ? "las dos manos"
-                          : `mano ${guidance!.hand}`}
+                          : `mano ${guidance.hand}`}
                       </span>
                     </p>
-                    <p className="mt-1 text-ink-600">{guidance!.movement}</p>
+                    <p className="mt-1 text-ink-600">{guidance.movement}</p>
                   </div>
                 </div>
               ))}

@@ -41,6 +41,13 @@ describe("keyGuidance", () => {
     expect(keyGuidance("€")).toBeNull();
   });
 
+  it("teaches Shift with the opposite-hand pinky rule", () => {
+    const guidance = keyGuidance("⇧")!;
+    expect(guidance.hand).toBe("las dos");
+    expect(guidance.fingerLabel).toMatch(/meñiques/i);
+    expect(guidance.movement).toMatch(/contraria/i);
+  });
+
   it("covers every key the curriculum introduces (except modifiers)", () => {
     for (const lesson of CURRICULUM_ES) {
       for (const key of lesson.introducedKeys) {

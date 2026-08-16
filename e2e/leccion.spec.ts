@@ -68,6 +68,8 @@ test("completed lessons survive a reload (persistence)", async ({ page }) => {
 
   await page.goto("/curso");
   await page.reload();
-  const firstNode = page.locator("li", { hasText: "Las anclas F y J" });
+  const firstNode = page.getByRole("link", {
+    name: "Lección 1: Las anclas F y J",
+  });
   await expect(firstNode.getByText("✓")).toBeVisible();
 });

@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { KEYBOARD_ROWS, FINGER_LABELS, SPACE_KEY, keyForChar } from "./layout";
+import {
+  KEYBOARD_ROWS,
+  FINGER_LABELS,
+  SPACE_KEY,
+  keyForChar,
+  requiresShift,
+} from "./layout";
 import { CURRICULUM_ES } from "@/data/curriculum/es";
 
 describe("KEYBOARD_ROWS (ISO-ES)", () => {
@@ -63,6 +69,27 @@ describe("keyForChar", () => {
 
   it("returns null for characters not on the base layout", () => {
     expect(keyForChar("€")).toBeNull();
+  });
+
+  it("resolves shifted punctuation to its base key", () => {
+    expect(keyForChar(";")?.char).toBe(",");
+    expect(keyForChar(":")?.char).toBe(".");
+    expect(keyForChar("_")?.char).toBe("-");
+  });
+});
+
+describe("requiresShift", () => {
+  it("is true for uppercase letters and shifted punctuation", () => {
+    expect(requiresShift("A")).toBe(true);
+    expect(requiresShift("Ñ")).toBe(true);
+    expect(requiresShift(";")).toBe(true);
+    expect(requiresShift("_")).toBe(true);
+  });
+
+  it("is false for lowercase letters, base punctuation and space", () => {
+    expect(requiresShift("a")).toBe(false);
+    expect(requiresShift(",")).toBe(false);
+    expect(requiresShift(" ")).toBe(false);
   });
 });
 

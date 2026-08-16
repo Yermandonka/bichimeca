@@ -2,28 +2,137 @@
 
 import Link from "next/link";
 import { CURRICULUM_ES, WORLD_TITLES } from "@/data/curriculum/es";
-import type { LessonType } from "@/domain/curriculum/types";
+import type { Lesson } from "@/domain/curriculum/types";
 import {
   completedLessonIds,
   currentLessonId,
   isLessonUnlocked,
 } from "@/domain/progress/selectors";
 import { lessonStars } from "@/domain/gamification/gamification";
+import type { ProgressData } from "@/domain/progress/progress";
 import { useProgress } from "../providers";
 
-const LESSON_TYPE_LABELS: Record<LessonType, string> = {
-  learn: "Nuevas teclas",
-  "guided-drill": "Ritmo",
-  "combo-drill": "Combinaciones",
-  words: "Palabras",
-  sentences: "Frases",
-  accuracy: "Precisión",
-  rhythm: "Ritmo",
-  speed: "Velocidad",
-  "weak-keys": "Teclas débiles",
-  review: "Repaso",
-  boss: "Prueba de dominio",
-};
+const ROW_PX = 104;
+
+/** Serpentine x position (percentage) for the nth node of a world. */
+function nodeX(index: number): number {
+  return 50 + 34 * Math.sin(index * 1.05);
+}
+
+function WorldPath({
+  lessons,
+  progress,
+  current,
+}: {
+  lessons: Lesson[];
+  progress: ProgressData;
+  current: string | null;
+}) {
+  const completed = completedLessonIds(progress);
+  const height = lessons.length * ROW_PX;
+  const points = lessons.map((_, i) => ({ x: nodeX(i), y: i * ROW_PX + ROW_PX / 2 }));
+  const path = points
+    .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`)
+    .join(" ");
+
+  return (
+    <div className="relative" style={{ height }}>
+      <svg
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full"
+        viewBox={`0 0 100 ${height}`}
+        preserveAspectRatio="none"
+      >
+        <path
+          d={path}
+          fill="none"
+          stroke="var(--color-brand-100)"
+          strokeWidth="3"
+          strokeDasharray="1 8"
+          strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
+        />
+      </svg>
+
+      {lessons.map((lesson, i) => {
+        const isCompleted = completed.has(lesson.id);
+        const isCurrent = lesson.id === current;
+        const unlocked = isLessonUnlocked(CURRICULUM_ES, progress, lesson.id);
+        const stars = lessonStars(progress, lesson.id);
+        const isBoss = lesson.type === "boss";
+
+        const circle = (
+          <span
+            className={`flex items-center justify-center rounded-full border-2 font-black shadow-[4px_4px_0_rgba(0,0,0,0.35)] transition ${
+              isBoss ? "h-16 w-16 text-2xl" : "h-14 w-14 text-lg"
+            } ${
+              isCurrent
+                ? "border-brand-500 bg-brand-500 text-noche-950 ring-4 ring-brand-500/30"
+                : isCompleted
+                  ? "border-menta-400 bg-menta-400/20 text-menta-400"
+                  : unlocked
+                    ? "border-brand-100 bg-noche-900 text-ink-900"
+                    : "border-ink-900/10 bg-noche-900/60 text-ink-400 opacity-70"
+            }`}
+          >
+            {isBoss ? "👑" : isCompleted ? "✓" : unlocked ? lesson.order : "🔒"}
+          </span>
+        );
+
+        const label = (
+          <span className="mt-1.5 block max-w-36 text-center text-xs font-semibold leading-tight">
+            <span className={unlocked ? "text-ink-900" : "text-ink-400"}>
+              {lesson.title}
+            </span>
+            {isCompleted && (
+              <span className="mt-0.5 block" aria-label={`${stars} de 3 estrellas`}>
+                {[1, 2, 3].map((star) => (
+                  <span
+                    key={star}
+                    aria-hidden="true"
+                    className={star <= stars ? "text-sol-400" : "text-ink-900/20"}
+                  >
+                    ★
+                  </span>
+                ))}
+              </span>
+            )}
+            {isCurrent && (
+              <span className="mt-0.5 block rounded-full bg-brand-500 px-2 py-0.5 text-[10px] font-black uppercase text-noche-950">
+                Continuar
+              </span>
+            )}
+          </span>
+        );
+
+        return (
+          <div
+            key={lesson.id}
+            className="absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center"
+            style={{ left: `${nodeX(i)}%`, top: i * ROW_PX + ROW_PX / 2 }}
+          >
+            {unlocked ? (
+              <Link
+                href={`/leccion/${lesson.id}`}
+                aria-current={isCurrent ? "step" : undefined}
+                aria-label={`Lección ${lesson.order}: ${lesson.title}`}
+                className="flex flex-col items-center rounded-2xl p-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+              >
+                {circle}
+                {label}
+              </Link>
+            ) : (
+              <div aria-disabled="true" className="flex flex-col items-center p-1">
+                {circle}
+                {label}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 export default function CursoPage() {
   const { progress } = useProgress();
@@ -36,8 +145,10 @@ export default function CursoPage() {
     );
   }
 
-  const completed = completedLessonIds(progress);
   const current = currentLessonId(CURRICULUM_ES, progress);
+  const worlds = [...new Set(CURRICULUM_ES.map((lesson) => lesson.world))].sort(
+    (a, b) => a - b,
+  );
 
   return (
     <main className="mx-auto max-w-2xl px-6 py-10">
@@ -45,107 +156,21 @@ export default function CursoPage() {
         <Link href="/" className="text-sm font-medium text-brand-600 hover:underline">
           ← Inicio
         </Link>
-        <h1 className="mt-2 text-3xl font-bold tracking-tight">Curso</h1>
+        <h1 className="mt-2 text-3xl font-black tracking-tight">Curso</h1>
       </header>
 
-      <ol className="relative flex flex-col gap-3">
-        {CURRICULUM_ES.map((lesson, index) => {
-          const worldTitle =
-            index === 0 || CURRICULUM_ES[index - 1].world !== lesson.world
-              ? (WORLD_TITLES[lesson.world] ?? `Mundo ${lesson.world}`)
-              : null;
-          const isCompleted = completed.has(lesson.id);
-          const isCurrent = lesson.id === current;
-          const unlocked = isLessonUnlocked(CURRICULUM_ES, progress, lesson.id);
-          const stars = lessonStars(progress, lesson.id);
-
-          const stateStyles = isCurrent
-            ? "border-brand-500 bg-noche-900 shadow-md ring-2 ring-brand-500/30"
-            : isCompleted
-              ? "border-brand-100 bg-brand-100/60"
-              : unlocked
-                ? "border-brand-100 bg-noche-900"
-                : "border-transparent bg-ink-900/5 opacity-60";
-
-          const content = (
-            <div
-              className={`flex items-center gap-4 rounded-2xl border p-4 transition ${stateStyles}`}
-            >
-              <span
-                aria-hidden="true"
-                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
-                  isCompleted
-                    ? "bg-brand-500 text-noche-950"
-                    : isCurrent
-                      ? "bg-brand-100 text-brand-700"
-                      : "bg-ink-900/10 text-ink-600"
-                }`}
-              >
-                {isCompleted ? "✓" : lesson.order}
-              </span>
-              <div className="min-w-0">
-                <p className="font-semibold text-ink-900">{lesson.title}</p>
-                <p className="text-sm text-ink-600">
-                  {LESSON_TYPE_LABELS[lesson.type]}
-                  {lesson.introducedKeys.length > 0 &&
-                    ` · ${lesson.introducedKeys
-                      .map((key) => key.toUpperCase())
-                      .join(" y ")}`}
-                </p>
-              </div>
-              {isCompleted && (
-                <span
-                  className="ml-auto text-lg tracking-wide"
-                  aria-label={`${stars} de 3 estrellas`}
-                >
-                  {[1, 2, 3].map((star) => (
-                    <span
-                      key={star}
-                      aria-hidden="true"
-                      className={
-                        star <= stars ? "text-sol-400" : "text-ink-900/15"
-                      }
-                    >
-                      ★
-                    </span>
-                  ))}
-                </span>
-              )}
-              {isCurrent && (
-                <span className="ml-auto rounded-full bg-brand-500 px-3 py-1 text-xs font-semibold text-noche-950">
-                  Continuar
-                </span>
-              )}
-              {!unlocked && (
-                <span className="ml-auto text-sm text-ink-400" aria-label="Bloqueada">
-                  🔒
-                </span>
-              )}
-            </div>
-          );
-
-          return (
-            <li key={lesson.id}>
-              {worldTitle && (
-                <h2 className="mb-3 mt-6 text-lg font-bold text-ink-900 first:mt-0">
-                  {worldTitle}
-                </h2>
-              )}
-              {unlocked ? (
-                <Link
-                  href={`/leccion/${lesson.id}`}
-                  aria-current={isCurrent ? "step" : undefined}
-                  className="block rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-                >
-                  {content}
-                </Link>
-              ) : (
-                <div aria-disabled="true">{content}</div>
-              )}
-            </li>
-          );
-        })}
-      </ol>
+      {worlds.map((world) => (
+        <section key={world} aria-label={WORLD_TITLES[world] ?? `Mundo ${world}`}>
+          <h2 className="mb-6 mt-10 rounded-2xl border-2 border-brand-100 bg-noche-900 px-5 py-3 text-center text-lg font-black shadow-[4px_4px_0_rgba(0,0,0,0.35)] first:mt-0">
+            {WORLD_TITLES[world] ?? `Mundo ${world}`}
+          </h2>
+          <WorldPath
+            lessons={CURRICULUM_ES.filter((lesson) => lesson.world === world)}
+            progress={progress}
+            current={current}
+          />
+        </section>
+      ))}
     </main>
   );
 }
