@@ -34,6 +34,14 @@ Puntuación orientativa: Impacto × Confianza / Esfuerzo (1–5).
 
 ## Hecho
 
+- 2026-08-16 — Juegos rediseñados con dinámicas distintas y sistema de
+  movimiento CSS (reduced-motion respetado): Naves con nave que apunta,
+  láser por letra, explosiones, combos y oleadas aceleradas; Magia con
+  estrellas fijas que se apagan, hada voladora, chispas y racha mágica que
+  recupera vida; mecánica de fijado extraída a dominio puro (lockOn, 7
+  tests). Modo texto en modo estricto (el error no avanza) con textos ~3×
+  más largos. Mapa del curso como camino serpenteante con nodos por mundo.
+
 - 2026-08-16 — Juegos (naves "Invasión Tecleante" y hada "Lluvia de
   Estrellas") con dificultad por mundo y palabras solo de teclas
   desbloqueadas; modo texto con banco de 12 textos originales, escritura

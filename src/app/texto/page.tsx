@@ -33,7 +33,7 @@ export default function TextoPage() {
   const { progress, updateProgress } = useProgress();
   const [textEntry, setTextEntry] = useState(() => randomText());
   const [session, setSession] = useState<Session>(() =>
-    createSession({ text: textEntry.text, mode: "test" }),
+    createSession({ text: textEntry.text, mode: "learning" }),
   );
   const inputRef = useRef<HTMLInputElement>(null);
   const savedRef = useRef(false);
@@ -42,7 +42,7 @@ export default function TextoPage() {
     const next = randomText(excludeId);
     savedRef.current = false;
     setTextEntry(next);
-    setSession(createSession({ text: next.text, mode: "test" }));
+    setSession(createSession({ text: next.text, mode: "learning" }));
     inputRef.current?.focus();
   }, []);
 
@@ -138,7 +138,7 @@ export default function TextoPage() {
               <dd className="text-2xl font-bold">{summary.errors}</dd>
             </div>
             <div className="rounded-2xl bg-brand-50 p-4">
-              <dt className="text-sm text-ink-600">Corregidos</dt>
+              <dt className="text-sm text-ink-600">Corregidas tras fallo</dt>
               <dd className="text-2xl font-bold">{summary.correctedPositions}</dd>
             </div>
             <div className="rounded-2xl bg-brand-50 p-4">
@@ -166,26 +166,19 @@ export default function TextoPage() {
               className="select-none font-mono text-xl leading-relaxed"
             >
               {[...textEntry.text].map((char, index) => {
-                const typed = session.buffer[index];
+                const isPast = index < session.position;
                 const isCurrent = index === session.position;
-                const state =
-                  typed === undefined
-                    ? isCurrent
-                      ? "current"
-                      : "future"
-                    : typed === char
-                      ? "correct"
-                      : "wrong";
+                const errored = isCurrent && session.currentPositionErrored;
                 return (
                   <span
                     key={index}
                     className={
-                      state === "current"
-                        ? "rounded bg-brand-100 underline decoration-brand-500 decoration-2 underline-offset-4"
-                        : state === "correct"
-                          ? "text-menta-400"
-                          : state === "wrong"
-                            ? "rounded bg-red-400/30 text-red-300"
+                      errored
+                        ? "rounded bg-red-400/30 text-red-300 underline decoration-2 underline-offset-4"
+                        : isCurrent
+                          ? "rounded bg-brand-100 underline decoration-brand-500 decoration-2 underline-offset-4"
+                          : isPast
+                            ? "text-menta-400"
                             : "text-ink-400"
                     }
                   >
@@ -229,7 +222,7 @@ export default function TextoPage() {
           </div>
           <p className="mt-3 flex justify-between text-sm text-ink-400">
             <span>
-              Modo real: los errores avanzan y se corrigen con retroceso.
+              Modo estricto: un error no avanza; pulsa la tecla correcta para seguir.
             </span>
             <span>
               {session.position}/{textEntry.text.length} · {session.errors} errores
