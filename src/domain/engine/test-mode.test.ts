@@ -91,6 +91,30 @@ describe("test-mode session: real-typing behavior", () => {
     expect(statsForA.errors).toBe(1);
     expect(session.keyStats.has("x")).toBe(false);
   });
+
+  it("ignores input after completion", () => {
+    const session = drive("no", [{ char: "n" }, { char: "o" }, { char: "x" }]);
+    expect(session.isComplete).toBe(true);
+    expect(session.totalKeystrokes).toBe(2);
+  });
+
+  it("backspace after completion is a no-op", () => {
+    const session = drive("no", [{ char: "n" }, { char: "o" }, { backspace: true }]);
+    expect(session.isComplete).toBe(true);
+    expect(session.position).toBe(2);
+    expect(session.cleanPositions).toBe(2);
+  });
+
+  it("measures latency from the previous event, including after backspace", () => {
+    let session = createSession({ text: "ala", mode: "test" });
+    session = handleInput(session, { char: "a", timeMs: 1000 });
+    session = handleInput(session, { char: "x", timeMs: 1200 });
+    session = handleBackspace(session, { timeMs: 1400 });
+    session = handleInput(session, { char: "l", timeMs: 1900 });
+    const statsForL = session.keyStats.get("l")!;
+    // readiness resets at the backspace (1400); correct press at 1900.
+    expect(statsForL.latenciesMs).toEqual([500]);
+  });
 });
 
 describe("test-mode summarize", () => {

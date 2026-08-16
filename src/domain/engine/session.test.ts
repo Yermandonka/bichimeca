@@ -42,6 +42,14 @@ describe("learning-mode session: progression", () => {
     expect(session.isComplete).toBe(true);
     expect(session.errors).toBe(0);
   });
+
+  it("treats an empty text as complete from the start", () => {
+    let session = createSession({ text: "", mode: "learning" });
+    expect(session.isComplete).toBe(true);
+    session = handleInput(session, { char: "x", timeMs: 1000 });
+    expect(session.totalKeystrokes).toBe(0);
+    expect(summarize(session).accuracy).toBeNull();
+  });
 });
 
 describe("learning-mode session: error accounting", () => {

@@ -2,6 +2,21 @@
 
 Auditorías y decisiones importantes, en orden cronológico inverso.
 
+## 2026-08-16 — Pasada de limpieza del motor de escritura
+
+- `src/domain/engine/session.ts`: sustituido el patrón de clonado con
+  mutación externa (`cloneStats`) por `recordAttempt`, una actualización
+  encapsulada e inmutable de `KeyStats`; extraído `recordKeystrokeTiming`
+  para deduplicar la contabilidad de pulsaciones entre ambos modos.
+- Tests de endurecimiento: entrada y retroceso tras completar en modo
+  test, latencia en modo test (se reinicia en cada evento, incluido el
+  retroceso) y sesión con texto vacío.
+- Cobertura del dominio: 100 % en líneas, ramas y funciones; 62 tests.
+- Observación (comportamiento existente, no modificado): en modo test la
+  sesión se completa al llenar el búfer aunque el último carácter sea
+  erróneo, y el retroceso posterior es inerte, así que el último carácter
+  no puede corregirse. Decisión de producto pendiente para el coder.
+
 ## 2026-08-16 — Pasada de limpieza del motor de métricas
 
 - Deduplicación en `src/domain/metrics/metrics.ts`: helper común de
