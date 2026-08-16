@@ -7,15 +7,23 @@ const securityHeaders = [
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
 ];
 
-const nextConfig: NextConfig = {
-  async headers() {
-    return [
-      {
-        source: "/(.*)",
-        headers: securityHeaders,
+const isLamppExport = process.env.LAMPP_EXPORT === "1";
+
+const nextConfig: NextConfig = isLamppExport
+  ? {
+      output: "export",
+      basePath: "/bichimeca",
+      trailingSlash: true,
+    }
+  : {
+      async headers() {
+        return [
+          {
+            source: "/(.*)",
+            headers: securityHeaders,
+          },
+        ];
       },
-    ];
-  },
-};
+    };
 
 export default nextConfig;

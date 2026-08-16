@@ -26,10 +26,12 @@ import { appendSession } from "@/domain/progress/progress";
 import { starsForAccuracy } from "@/domain/gamification/gamification";
 import { mergeSessionKeyStats } from "@/domain/progress/keyStats";
 import { useProgress } from "@/app/providers";
+import { keyGuidance } from "@/domain/keyboard/teaching";
 import { VirtualKeyboard } from "./VirtualKeyboard";
 
 export function LessonRunner({ lesson }: { lesson: Lesson }) {
   const { progress, updateProgress } = useProgress();
+  const [phase, setPhase] = useState<"intro" | "typing">("intro");
   const [exerciseIndex, setExerciseIndex] = useState(0);
   const [session, setSession] = useState<Session>(() =>
     createSession({ text: lesson.exercises[0].text, mode: "learning" }),
@@ -189,6 +191,64 @@ export function LessonRunner({ lesson }: { lesson: Lesson }) {
             Repetir
           </button>
         </div>
+      </section>
+    );
+  }
+
+  if (phase === "intro") {
+    const guides = lesson.introducedKeys
+      .map((key) => ({ key, guidance: keyGuidance(key) }))
+      .filter((entry) => entry.guidance !== null);
+    return (
+      <section className="mx-auto mt-8 max-w-2xl rounded-3xl border-2 border-brand-100 bg-noche-900 p-8 shadow-[6px_6px_0_rgba(0,0,0,0.35)]">
+        {guides.length > 0 && (
+          <>
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-brand-600">
+              Teclas nuevas
+            </h2>
+            <div className="mt-4 flex flex-col gap-4">
+              {guides.map(({ key, guidance }) => (
+                <div key={key} className="flex items-start gap-5">
+                  <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border-2 border-brand-500 bg-brand-100 font-mono text-3xl font-black text-brand-700 shadow-[3px_3px_0_#7a2413]">
+                    {key === " " ? "␣" : key.toUpperCase()}
+                  </span>
+                  <div>
+                    <p className="font-bold">
+                      {guidance!.fingerLabel}
+                      <span className="font-normal text-ink-600">
+                        {" "}
+                        ·{" "}
+                        {guidance!.hand === "las dos"
+                          ? "las dos manos"
+                          : `mano ${guidance!.hand}`}
+                      </span>
+                    </p>
+                    <p className="mt-1 text-ink-600">{guidance!.movement}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+        {lesson.tip && (
+          <div
+            className={`rounded-2xl border-l-4 border-sol-400 bg-brand-100/50 p-5 ${
+              guides.length > 0 ? "mt-7" : ""
+            }`}
+          >
+            <p className="text-sm font-semibold uppercase tracking-wide text-sol-400">
+              Consejo
+            </p>
+            <p className="mt-2 text-lg leading-relaxed text-ink-900">{lesson.tip}</p>
+          </div>
+        )}
+        <button
+          type="button"
+          onClick={() => setPhase("typing")}
+          className="mt-8 w-full rounded-2xl bg-brand-500 px-8 py-4 text-lg font-bold text-noche-950 shadow-[5px_5px_0_#7a2413] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:bg-brand-600 hover:shadow-[3px_3px_0_#7a2413]"
+        >
+          Empezar a escribir
+        </button>
       </section>
     );
   }

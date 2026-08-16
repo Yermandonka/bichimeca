@@ -5,6 +5,7 @@ import {
   KEYBOARD_ROWS,
   SPACE_KEY,
   keyForChar,
+  requiresShift,
   type KeyboardKey,
 } from "@/domain/keyboard/layout";
 
@@ -23,6 +24,30 @@ export function VirtualKeyboard({
   hasError: boolean;
 }) {
   const expectedKey = expectedChar !== null ? keyForChar(expectedChar) : null;
+  const needsShift = expectedChar !== null && requiresShift(expectedChar);
+  // Technique: hold Shift with the pinky OPPOSITE to the letter's hand.
+  const shiftSide: "izq" | "der" | null =
+    needsShift && expectedKey
+      ? expectedKey.finger.endsWith("-izq")
+        ? "der"
+        : "izq"
+      : null;
+
+  const renderShift = (side: "izq" | "der") => {
+    const active = shiftSide === side;
+    return (
+      <span
+        data-key={`shift-${side}`}
+        className={`flex h-10 flex-1 items-center justify-center rounded-lg border font-mono text-sm font-semibold shadow-sm transition-colors ${
+          active
+            ? "border-sol-400 bg-sol-400/20 text-sol-400 ring-2 ring-sol-400"
+            : "border-ink-900/10 bg-noche-900 text-ink-600"
+        }`}
+      >
+        ⇧
+      </span>
+    );
+  };
 
   const renderKey = (key: KeyboardKey, extraClasses = "") => {
     const isExpected = expectedKey?.char === key.char;
@@ -68,7 +93,11 @@ export function VirtualKeyboard({
             ))}
           </div>
         ))}
-        <div className="w-1/2">{renderKey(SPACE_KEY, "w-full")}</div>
+        <div className="flex w-full items-center gap-1.5">
+          {renderShift("izq")}
+          <div className="w-1/2">{renderKey(SPACE_KEY, "w-full")}</div>
+          {renderShift("der")}
+        </div>
       </div>
       <p className="mt-2 min-h-5 text-center text-sm text-ink-600">
         {expectedKey ? (
@@ -77,6 +106,12 @@ export function VirtualKeyboard({
             <span className="font-semibold text-brand-700">
               {FINGER_LABELS[expectedKey.finger]}
             </span>
+            {needsShift && (
+              <span className="text-sol-400">
+                {" "}
+                + Shift con el meñique {shiftSide === "izq" ? "izquierdo" : "derecho"}
+              </span>
+            )}
           </>
         ) : null}
       </p>

@@ -34,6 +34,15 @@ Puntuación orientativa: Impacto × Confianza / Esfuerzo (1–5).
 
 ## Hecho
 
+- 2026-08-16 — Juegos (naves "Invasión Tecleante" y hada "Lluvia de
+  Estrellas") con dificultad por mundo y palabras solo de teclas
+  desbloqueadas; modo texto con banco de 12 textos originales, escritura
+  libre en modo test y ranking persistente; enseñanza real por lección
+  (presentación de teclas con dedo/mano/movimiento y consejo destacado);
+  Mundos 4 (mayúsculas con técnica Shift a mano contraria) y 5 (puntuación
+  y frases reales) — 48 lecciones; Shift en validador y teclado virtual;
+  título de pestaña "Bichimeca"; 179 unitarios + 5 E2E.
+
 - 2026-08-16 — Teclado virtual ISO-ES (`src/domain/keyboard/layout.ts` +
   componente): tres filas de letras con ñ y barra espaciadora, dedo asignado
   por tecla, anclas F/J marcadas, resaltado de tecla esperada y estado de

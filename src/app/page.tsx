@@ -5,6 +5,7 @@ import { CURRICULUM_ES } from "@/data/curriculum/es";
 import { currentLessonId } from "@/domain/progress/selectors";
 import { recentAverages } from "@/domain/progress/recent";
 import { practiceStreak } from "@/domain/gamification/gamification";
+import { gameDifficulty } from "@/domain/games/wordPool";
 import { formatAccuracy, formatPpm } from "@/domain/metrics/format";
 import { useProgress } from "./providers";
 
@@ -100,6 +101,45 @@ export default function Home() {
         >
           Ver el curso completo
         </Link>
+      </section>
+
+      <section aria-label="Juegos y modo texto" className="mt-2">
+        <p className="mb-3 text-sm font-medium uppercase tracking-wide text-ink-400">
+          Juegos y práctica libre — dificultad: Mundo{" "}
+          {gameDifficulty(CURRICULUM_ES, progress).world}
+        </p>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <Link
+            href="/juegos/naves"
+            className="group rounded-3xl border-2 border-brand-100 bg-[radial-gradient(circle_at_20%_10%,rgba(120,80,255,0.3),transparent_50%)] bg-noche-900 p-6 shadow-[5px_5px_0_rgba(0,0,0,0.35)] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:border-brand-500 hover:shadow-[3px_3px_0_rgba(0,0,0,0.35)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+          >
+            <p className="text-4xl transition group-hover:-translate-y-1">🚀</p>
+            <p className="mt-2 text-lg font-black">Invasión Tecleante</p>
+            <p className="text-sm text-ink-600">
+              Derriba naves espaciales escribiendo sus palabras antes de que aterricen.
+            </p>
+          </Link>
+          <Link
+            href="/juegos/magia"
+            className="group rounded-3xl border-2 border-brand-100 bg-[radial-gradient(circle_at_75%_20%,rgba(255,105,180,0.3),transparent_50%)] bg-noche-900 p-6 shadow-[5px_5px_0_rgba(0,0,0,0.35)] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:border-sol-400 hover:shadow-[3px_3px_0_rgba(0,0,0,0.35)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+          >
+            <p className="text-4xl transition group-hover:-translate-y-1">🧚</p>
+            <p className="mt-2 text-lg font-black">Lluvia de Estrellas</p>
+            <p className="text-sm text-ink-600">
+              Atrapa estrellas fugaces con tu varita escribiendo su palabra mágica.
+            </p>
+          </Link>
+          <Link
+            href="/texto"
+            className="group rounded-3xl border-2 border-brand-100 bg-[radial-gradient(circle_at_50%_15%,rgba(46,230,168,0.22),transparent_50%)] bg-noche-900 p-6 shadow-[5px_5px_0_rgba(0,0,0,0.35)] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:border-menta-400 hover:shadow-[3px_3px_0_rgba(0,0,0,0.35)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+          >
+            <p className="text-4xl transition group-hover:-translate-y-1">📜</p>
+            <p className="mt-2 text-lg font-black">Modo texto</p>
+            <p className="text-sm text-ink-600">
+              Textos reales al azar, escritura libre y tu ranking de mejores marcas.
+            </p>
+          </Link>
+        </div>
       </section>
     </main>
   );

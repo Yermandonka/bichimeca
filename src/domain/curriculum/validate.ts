@@ -1,3 +1,4 @@
+import { SHIFTED_CHARS } from "@/domain/keyboard/layout";
 import { ALWAYS_ALLOWED_CHARS, type Lesson } from "./types";
 
 /**
@@ -58,12 +59,17 @@ export function validateCurriculum(curriculum: Lesson[]): string[] {
 
     lesson.exercises.forEach((exercise, index) => {
       for (const char of exercise.text) {
-        if (!allowed.has(char) && !ALWAYS_ALLOWED_CHARS.has(char)) {
-          problems.push(
-            `Lección "${lesson.id}", ejercicio ${index}: carácter "${char}" no disponible todavía`,
-          );
-          break;
+        if (allowed.has(char) || ALWAYS_ALLOWED_CHARS.has(char)) continue;
+        // Shifted characters (uppercase letters, ; : _) are available once
+        // the learner knows Shift ("⇧") and the base key.
+        const baseChar = SHIFTED_CHARS[char] ?? char.toLowerCase();
+        if (baseChar !== char && allowed.has("⇧") && allowed.has(baseChar)) {
+          continue;
         }
+        problems.push(
+          `Lección "${lesson.id}", ejercicio ${index}: carácter "${char}" no disponible todavía`,
+        );
+        break;
       }
     });
   }
