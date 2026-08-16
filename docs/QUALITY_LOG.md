@@ -2,6 +2,21 @@
 
 Auditorías y decisiones importantes, en orden cronológico inverso.
 
+## 2026-08-16 — Pasada de limpieza de la experiencia de lección
+
+- Lógica pura extraída de `LessonRunner.tsx` a `src/domain/engine/aggregate.ts`
+  (`combineKeyStats`, `combineSummaries`, tipo `LessonTotals`): la agregación
+  de ejercicios en totales de lección ahora es testeable y reutiliza
+  `ppm`/`rawPpm`/`accuracy` del dominio en lugar de reimplementarlas inline.
+- `src/domain/curriculum/ordering.ts` nuevo con `byOrder` y `nextLessonAfter`;
+  elimina la tercera copia de la ordenación del currículo (LessonRunner) y
+  los selectores de progreso dependen de él.
+- `median` unificada en `src/domain/metrics/stats.ts` (antes duplicada en
+  `metrics.ts` y `keyStats.ts`); lanza error con lista vacía y los llamadores
+  guardan el caso vacío explícitamente.
+- Tests para los tres módulos nuevos y para la rama de cero intentos en
+  `keyStats`. Todo al 100 % de cobertura; 131 tests.
+
 ## 2026-08-16 — Pasada de limpieza de persistencia y selectores
 
 - `selectors.ts`: extraído `byOrder` para no duplicar la ordenación del

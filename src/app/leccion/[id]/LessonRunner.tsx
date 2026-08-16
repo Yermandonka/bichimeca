@@ -9,80 +9,22 @@ import {
   handleBackspace,
   handleInput,
   summarize,
-  type KeyStats,
   type Session,
-  type SessionSummary,
 } from "@/domain/engine/session";
+import {
+  combineKeyStats,
+  combineSummaries,
+  type CompletedExercise,
+} from "@/domain/engine/aggregate";
 import {
   formatAccuracy,
   formatDuration,
   formatPpm,
 } from "@/domain/metrics/format";
+import { nextLessonAfter } from "@/domain/curriculum/ordering";
 import { appendSession } from "@/domain/progress/progress";
 import { mergeSessionKeyStats } from "@/domain/progress/keyStats";
 import { useProgress } from "@/app/providers";
-
-interface CompletedExercise {
-  summary: SessionSummary;
-  keyStats: ReadonlyMap<string, KeyStats>;
-}
-
-function combineKeyStats(
-  exercises: CompletedExercise[],
-): Map<string, KeyStats> {
-  const combined = new Map<string, KeyStats>();
-  for (const exercise of exercises) {
-    for (const [key, stats] of exercise.keyStats) {
-      const previous = combined.get(key);
-      combined.set(key, {
-        attempts: (previous?.attempts ?? 0) + stats.attempts,
-        correct: (previous?.correct ?? 0) + stats.correct,
-        errors: (previous?.errors ?? 0) + stats.errors,
-        latenciesMs: [...(previous?.latenciesMs ?? []), ...stats.latenciesMs],
-      });
-    }
-  }
-  return combined;
-}
-
-function combineSummaries(exercises: CompletedExercise[]) {
-  const totals = exercises.reduce(
-    (acc, { summary }) => ({
-      durationMs: acc.durationMs + summary.durationMs,
-      totalKeystrokes: acc.totalKeystrokes + summary.totalKeystrokes,
-      correctKeystrokes: acc.correctKeystrokes + summary.correctKeystrokes,
-      errors: acc.errors + summary.errors,
-    }),
-    { durationMs: 0, totalKeystrokes: 0, correctKeystrokes: 0, errors: 0 },
-  );
-
-  const accuracy =
-    totals.totalKeystrokes > 0
-      ? totals.correctKeystrokes / totals.totalKeystrokes
-      : null;
-  const minutes = totals.durationMs / 60_000;
-  const ppm = minutes > 0 ? totals.correctKeystrokes / 5 / minutes : 0;
-  const rawPpm = minutes > 0 ? totals.totalKeystrokes / 5 / minutes : 0;
-
-  // Duration-weighted blend of the per-exercise rhythm scores.
-  const withConsistency = exercises.filter(
-    ({ summary }) => summary.consistency !== null && summary.durationMs > 0,
-  );
-  const weightTotal = withConsistency.reduce(
-    (acc, { summary }) => acc + summary.durationMs,
-    0,
-  );
-  const consistency =
-    weightTotal > 0
-      ? withConsistency.reduce(
-          (acc, { summary }) =>
-            acc + summary.consistency! * (summary.durationMs / weightTotal),
-          0,
-        )
-      : null;
-
-  return { ...totals, accuracy, ppm, rawPpm, consistency };
-}
 
 export function LessonRunner({ lesson }: { lesson: Lesson }) {
   const { progress, updateProgress } = useProgress();
@@ -96,11 +38,10 @@ export function LessonRunner({ lesson }: { lesson: Lesson }) {
 
   const isLessonDone = completed.length === lesson.exercises.length;
 
-  const nextLesson = useMemo(() => {
-    const ordered = [...CURRICULUM_ES].sort((a, b) => a.order - b.order);
-    const index = ordered.findIndex((candidate) => candidate.id === lesson.id);
-    return index >= 0 ? (ordered[index + 1] ?? null) : null;
-  }, [lesson.id]);
+  const nextLesson = useMemo(
+    () => nextLessonAfter(CURRICULUM_ES, lesson.id),
+    [lesson.id],
+  );
 
   const feedChar = useCallback((char: string) => {
     setSession((current) => {
