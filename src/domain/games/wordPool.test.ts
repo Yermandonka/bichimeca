@@ -108,4 +108,47 @@ describe("gameDifficulty", () => {
     expect(difficulty.fallMs).toBeGreaterThan(1000);
     expect(Number.isFinite(difficulty.spawnMs)).toBe(true);
   });
+
+  it("defaults to the gentlest level with an empty curriculum", () => {
+    const difficulty = gameDifficulty([], createEmptyProgress(NOW));
+    expect(difficulty.world).toBe(1);
+    expect(difficulty.fallMs).toBe(9000);
+  });
+
+  it("falls back to level 1 for worlds without a defined level", () => {
+    const oddCurriculum = [
+      {
+        id: "w0-l1",
+        world: 0,
+        order: 1,
+        title: "Fuera de rango",
+        type: "learn" as const,
+        introducedKeys: ["f", "j"],
+        practicedKeys: ["f", "j"],
+        xp: 10,
+        exercises: [{ type: "drill" as const, text: "fj f jf" }],
+      },
+    ];
+    const difficulty = gameDifficulty(oddCurriculum, createEmptyProgress(NOW));
+    expect(difficulty.world).toBe(0);
+    expect(difficulty.fallMs).toBe(9000);
+  });
+
+  it("skips single-character tokens in the pool", () => {
+    const oddCurriculum = [
+      {
+        id: "w1-x",
+        world: 1,
+        order: 1,
+        title: "Con letras sueltas",
+        type: "learn" as const,
+        introducedKeys: ["f", "j"],
+        practicedKeys: ["f", "j"],
+        xp: 10,
+        exercises: [{ type: "drill" as const, text: "f j fj jf" }],
+      },
+    ];
+    const pool = gameWordPool(oddCurriculum, createEmptyProgress(NOW));
+    expect(pool.sort()).toEqual(["fj", "jf"]);
+  });
 });

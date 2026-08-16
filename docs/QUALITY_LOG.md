@@ -2,6 +2,20 @@
 
 Auditorías y decisiones importantes, en orden cronológico inverso.
 
+## 2026-08-16 — Pasada de limpieza de juegos, texto libre y mundos 4–5
+
+- Buena arquitectura de la entrega: material y dificultad de los juegos en
+  dominio (`wordPool.ts`), guía pedagógica por tecla en dominio
+  (`teaching.ts`) y el bucle del juego (temporizadores/aleatoriedad) como
+  límite de UI. Sin cambios estructurales.
+- Cobertura recuperada al 100 %: tests nuevos para la guía de Shift
+  (regla del meñique contrario), `requiresShift`, puntuación con Shift
+  resuelta a su tecla base, dificultad con currículo vacío o mundo sin
+  nivel definido, y descarte de fichas de un solo carácter en el pool.
+- `LessonRunner`: aserciones no nulas de la fase de introducción
+  sustituidas por un `flatMap` con estrechamiento de tipos.
+- 186 tests; todo al 100 %. La suite e2e sigue siendo del coder.
+
 ## 2026-08-16 — Pasada de limpieza de consejos del mundo 1
 
 - Entrega de solo datos/documentación/activos (consejos del mundo 1,
