@@ -8,21 +8,20 @@ import type { ProgressData } from "./progress";
 
 export const RECENT_SESSION_WINDOW = 5;
 
+const average = (values: number[]): number | null =>
+  values.length > 0
+    ? values.reduce((acc, value) => acc + value, 0) / values.length
+    : null;
+
 export function recentAverages(progress: ProgressData): {
   ppm: number | null;
   accuracy: number | null;
 } {
   const recent = progress.sessions.slice(-RECENT_SESSION_WINDOW);
-  if (recent.length === 0) return { ppm: null, accuracy: null };
-
-  const ppm = recent.reduce((acc, s) => acc + s.ppm, 0) / recent.length;
-
-  const withAccuracy = recent.filter((s) => s.accuracy !== null);
-  const accuracy =
-    withAccuracy.length > 0
-      ? withAccuracy.reduce((acc, s) => acc + (s.accuracy as number), 0) /
-        withAccuracy.length
-      : null;
-
-  return { ppm, accuracy };
+  return {
+    ppm: average(recent.map((s) => s.ppm)),
+    accuracy: average(
+      recent.map((s) => s.accuracy).filter((a): a is number => a !== null),
+    ),
+  };
 }

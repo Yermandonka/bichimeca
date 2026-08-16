@@ -58,6 +58,16 @@ describe("recentAverages", () => {
     expect(result.accuracy).toBeCloseTo(0.98);
   });
 
+  it("drops exactly the oldest session when one past the window", () => {
+    // 6 sessions with distinct speeds: the window must keep the last 5.
+    const result = recentAverages(
+      progressWith(
+        [10, 20, 30, 40, 50, 60].map((ppm) => ({ ppm, accuracy: 0.9 })),
+      ),
+    );
+    expect(result.ppm).toBeCloseTo((20 + 30 + 40 + 50 + 60) / 5);
+  });
+
   it("ignores null accuracies without breaking the average", () => {
     const result = recentAverages(
       progressWith([
