@@ -98,7 +98,7 @@ export default function TextoPage() {
   const titleById = new Map(TEXTS_ES.map((entry) => [`texto:${entry.id}`, entry.title]));
 
   return (
-    <main className="mx-auto min-h-dvh max-w-5xl px-6 py-8">
+    <main className="min-h-dvh w-full px-8 py-8 lg:px-16">
       <header className="mb-6 flex items-baseline justify-between">
         <div>
           <Link href="/" className="text-sm font-medium text-brand-600 hover:underline">

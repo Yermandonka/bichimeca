@@ -59,7 +59,7 @@ interface World {
   lastSpawn: number;
   shakeUntil: number;
   laser: { x1: number; y1: number; x2: number; y2: number; until: number } | null;
-  ship: { x: number; angle: number };
+  ship: { x: number };
 }
 
 const LIVES = 3;
@@ -67,12 +67,19 @@ const TICK_MS = 60;
 const RECORD_KEY = "bichimeca.record.naves";
 const SHIP_Y = 88;
 
-const ENEMY_STYLE: Record<EnemyKind, { emoji: string; label: string }> = {
-  normal: { emoji: "🛸", label: "nave" },
-  veloz: { emoji: "🛰️", label: "nave veloz" },
-  tanque: { emoji: "👾", label: "nave acorazada" },
-  dorada: { emoji: "💫", label: "nave dorada" },
+const ENEMY_LABEL: Record<EnemyKind, string> = {
+  normal: "nave",
+  veloz: "nave veloz",
+  tanque: "nave acorazada",
+  dorada: "nave dorada",
 };
+
+/** Every ship of a wave shares one emoji; the fleet changes each wave. */
+const WAVE_EMOJIS = ["🛸", "👾", "🤖", "👽", "🛰️", "🦾", "🐙", "💀"];
+
+function waveEmoji(wave: number): string {
+  return WAVE_EMOJIS[(wave - 1) % WAVE_EMOJIS.length];
+}
 
 function waveQuotaFor(wave: number): number {
   return 6 + wave * 2;
@@ -86,12 +93,14 @@ function pickKind(wave: number): EnemyKind {
   return "normal";
 }
 
-/** Words grow with the waves; fast ships get short words, tanks long ones. */
+/** Word length rises one step per wave; fast ships shorter, tanks longer. */
 function pickWord(pool: string[], wave: number, kind: EnemyKind): string {
-  const min = kind === "veloz" ? 2 : Math.min(2 + Math.floor(wave / 2), 5);
-  const max = kind === "tanque" ? 6 + wave : 4 + wave;
+  const shift = kind === "veloz" ? -1 : kind === "tanque" ? 2 : 0;
+  const min = Math.max(2, 1 + wave + shift);
+  const max = min + 2;
   const fit = pool.filter((word) => word.length >= min && word.length <= max);
-  const source = fit.length > 0 ? fit : pool;
+  const longest = pool.filter((word) => word.length >= min);
+  const source = fit.length > 0 ? fit : longest.length > 0 ? longest : pool;
   return source[Math.floor(Math.random() * source.length)];
 }
 
@@ -113,7 +122,7 @@ function freshWorld(): World {
     lastSpawn: 0,
     shakeUntil: 0,
     laser: null,
-    ship: { x: 50, angle: 0 },
+    ship: { x: 50 },
   };
 }
 
@@ -241,18 +250,11 @@ export default function NavesPage() {
         });
       }
 
-      // Ship: glide towards the locked target (patrol when idle) with the
-      // tip rotated to aim at it.
+      // Ship: glide under the locked target; barely drift when idle. The
+      // rocket always points straight up.
       const target = world.enemies.find((e) => e.id === world.lock.targetId);
-      const wantedX = target ? target.x : 50 + 30 * Math.sin(now / 1400);
+      const wantedX = target ? target.x : 50 + 8 * Math.sin(now / 3000);
       world.ship.x += (wantedX - world.ship.x) * 0.14;
-      if (target) {
-        const dx = target.x - world.ship.x;
-        const dy = enemyY(target, now) - SHIP_Y;
-        world.ship.angle = (Math.atan2(dx, -dy) * 180) / Math.PI;
-      } else {
-        world.ship.angle += (0 - world.ship.angle) * 0.2;
-      }
 
       if (world.lives === 0) finish();
       setFrame((f) => f + 1);
@@ -392,7 +394,7 @@ export default function NavesPage() {
             <button
               type="button"
               onClick={togglePause}
-              className="rounded-full border-2 border-brand-100 bg-noche-900 px-3 py-1 text-xs font-bold hover:border-brand-500"
+              className="rounded-full border-2 border-brand-100 bg-noche-900 px-5 py-2.5 text-base font-bold hover:border-brand-500"
             >
               {status === "paused" ? "▶ Reanudar" : "⏸ Pausa"}
             </button>
@@ -450,12 +452,12 @@ export default function NavesPage() {
                 style={{ left: `${enemy.x}%`, top: `${y}%` }}
               >
                 <p
-                  aria-label={ENEMY_STYLE[enemy.kind].label}
+                  aria-label={ENEMY_LABEL[enemy.kind]}
                   className={`${enemy.kind === "tanque" ? "text-4xl" : "text-3xl"} ${
                     isTarget ? "anim-wobble" : "anim-drift"
                   }`}
                 >
-                  {ENEMY_STYLE[enemy.kind].emoji}
+                  {waveEmoji(world.wave)}
                 </p>
                 <p
                   className={`mt-0.5 rounded-lg px-2 py-0.5 font-mono text-lg font-bold ${
@@ -507,7 +509,7 @@ export default function NavesPage() {
             style={{
               left: `${world.ship.x}%`,
               top: `${SHIP_Y}%`,
-              transform: `translateX(-50%) rotate(${world.ship.angle}deg)`,
+              transform: "translateX(-50%)",
             }}
           >
             🚀
