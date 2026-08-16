@@ -39,8 +39,8 @@ requieren variables de entorno para el funcionamiento básico.
 - `src/domain/` — lógica de aprendizaje pura y testeable (métricas, motor de
   escritura, progreso, adaptación), independiente de React.
 - `src/app/` — UI (App Router).
+- `src/data/curriculum/` — contenido de lecciones, validado por tests.
+- `e2e/` — flujos críticos con Playwright (`npm run test:e2e`).
 - `docs/` — [PRODUCT_SPEC](docs/PRODUCT_SPEC.md) ·
   [PEDAGOGY](docs/PEDAGOGY.md) · [ITERATION_BACKLOG](docs/ITERATION_BACKLOG.md) ·
   [QUALITY_LOG](docs/QUALITY_LOG.md)
-- `swarmforge/`, `.swarmforge/`, `bb.edn`, `test/` — infraestructura del
-  enjambre de agentes (no forma parte de la aplicación).

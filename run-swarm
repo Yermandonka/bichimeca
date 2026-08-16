@@ -1,5 +1,0 @@
-#!/usr/bin/env sh
-PROJECT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-export PATH="$PROJECT_DIR/.tools/bin:$PATH"
-export SWARMFORGE_TERMINAL=none
-exec "$PROJECT_DIR/swarm" "$@"
