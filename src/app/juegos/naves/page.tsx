@@ -8,6 +8,7 @@ import { gameDifficulty, gameWordPool } from "@/domain/games/wordPool";
 import { initialLockOn, pressKey, type LockOnState } from "@/domain/games/lockOn";
 import { formatAccuracy } from "@/domain/metrics/format";
 import { useProgress } from "@/app/providers";
+import { loadRecord, submitScore } from "@/infrastructure/storage/recordStore";
 
 /**
  * Invasión Tecleante — full-screen wave shooter.
@@ -137,8 +138,7 @@ export default function NavesPage() {
   const base = useMemo(() => gameDifficulty(CURRICULUM_ES, progress), [progress]);
 
   useEffect(() => {
-    const stored = Number(window.localStorage.getItem(RECORD_KEY) ?? "0");
-    if (Number.isFinite(stored)) setRecord(stored);
+    setRecord(loadRecord(window.localStorage, RECORD_KEY));
   }, []);
 
   const start = useCallback(() => {
@@ -151,12 +151,10 @@ export default function NavesPage() {
   const finish = useCallback(() => {
     const { score } = worldRef.current;
     setStatus("over");
-    if (score > record) {
-      setRecord(score);
-      setNewRecord(true);
-      window.localStorage.setItem(RECORD_KEY, String(score));
-    }
-  }, [record]);
+    const { best, isNew } = submitScore(window.localStorage, RECORD_KEY, score);
+    setRecord(best);
+    setNewRecord(isNew);
+  }, []);
 
   const togglePause = useCallback(() => {
     if (status === "playing") {
