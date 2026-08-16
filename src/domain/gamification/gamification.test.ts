@@ -66,6 +66,14 @@ describe("lessonStars", () => {
     ]);
     expect(lessonStars(progress, "w1-l1")).toBe(3);
   });
+
+  it("ignores sessions from other lessons", () => {
+    const progress = progressWithSessions([
+      { lessonId: "w1-l1", accuracy: 0.9, completedAt: `${DAY}T08:00:00.000Z` },
+      { lessonId: "w1-l2", accuracy: 1, completedAt: `${DAY}T09:00:00.000Z` },
+    ]);
+    expect(lessonStars(progress, "w1-l1")).toBe(1);
+  });
 });
 
 describe("practiceStreak", () => {
@@ -96,6 +104,14 @@ describe("practiceStreak", () => {
       { lessonId: "b", accuracy: 1, completedAt: "2026-08-13T10:00:00.000Z" },
     ]);
     expect(practiceStreak(progress, DAY)).toBe(0);
+  });
+
+  it("crosses month boundaries correctly", () => {
+    const progress = progressWithSessions([
+      { lessonId: "a", accuracy: 1, completedAt: "2026-07-31T10:00:00.000Z" },
+      { lessonId: "b", accuracy: 1, completedAt: "2026-08-01T10:00:00.000Z" },
+    ]);
+    expect(practiceStreak(progress, "2026-08-01")).toBe(2);
   });
 
   it("counts several sessions on one day as a single streak day", () => {

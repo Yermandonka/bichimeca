@@ -53,11 +53,7 @@ function previousDay(day: string): string {
  */
 export function practiceStreak(progress: ProgressData, today: string): number {
   const days = new Set(progress.sessions.map((session) => dayOf(session.completedAt)));
-  if (days.size === 0) return 0;
-
   let cursor = days.has(today) ? today : previousDay(today);
-  if (!days.has(cursor)) return 0;
-
   let streak = 0;
   while (days.has(cursor)) {
     streak += 1;
