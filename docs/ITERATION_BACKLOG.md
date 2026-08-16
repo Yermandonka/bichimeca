@@ -6,10 +6,7 @@ Puntuación orientativa: Impacto × Confianza / Esfuerzo (1–5).
 
 ## P1 — núcleo de aprendizaje
 
-1. **Motor de escritura** (5×5/3): captura de pulsaciones con eventos de
-   texto (teclas muertas/acentos correctos), modos aprendizaje vs test,
-   conteo de errores/correcciones, latencias por tecla. Independiente de React
-   y testeado.
+1. ~~Motor de escritura~~ — hecho (modos aprendizaje y test).
 2. **Modelo de progreso + persistencia** (5×5/3): esquema versionado
    (SchemaVersion, LearnerProfile, SessionHistory, KeyStatistics…), capa de
    persistencia con abstracción localStorage/IndexedDB, tests de migración.
@@ -36,6 +33,15 @@ Puntuación orientativa: Impacto × Confianza / Esfuerzo (1–5).
 11. Sonido opcional, microinteracciones, minijuegos, marca refinada.
 
 ## Hecho
+
+- 2026-08-16 — Motor de escritura (modo test): avance con error sin
+  cascadas (alineado por posición), backspace real, errores contados una vez
+  en el momento del fallo y nunca borrados, posiciones limpias/corregidas
+  juzgadas sobre el buffer final; 10 tests.
+- 2026-08-16 — Motor de escritura (modo aprendizaje) en
+  `src/domain/engine/session.ts`: sesión pura y determinista, sin cascadas de
+  error, posiciones limpias vs corregidas, estadísticas y latencias por tecla
+  (desde readiness hasta acierto), resumen integrado con métricas; 17 tests.
 
 - 2026-08-16 — Andamiaje (Next 15, TS, Tailwind 4, Vitest, ESLint, cabeceras
   de seguridad), módulo de métricas (PPM/bruta, precisión, tasa de error,
