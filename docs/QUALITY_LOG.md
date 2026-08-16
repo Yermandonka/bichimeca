@@ -2,6 +2,23 @@
 
 Auditorías y decisiones importantes, en orden cronológico inverso.
 
+## 2026-08-16 — Pasada de limpieza de mundos 2–3, tema oscuro y e2e
+
+- Contenido de los mundos 2–3 validado por las puertas existentes: el
+  validador de currículo garantiza estructuralmente la afirmación «sin
+  letras de la fila inferior en el mundo 2» (esas teclas se introducen en
+  el mundo 3) y el cross-check del teclado cubre cada carácter nuevo.
+- Tests de invariantes de datos nuevos: cada mundo tiene título en
+  `WORLD_TITLES` y los mundos son contiguos por orden (supuesto de los
+  encabezados del mapa del curso). Todo al 100 %; 161 tests.
+- La suite e2e de Playwright es del coder; el cleaner no la ejecuta ni la
+  mantiene (verificación por tests unitarios y `npm run verify` según las
+  reglas del proyecto).
+- Observación (sin cambio): el retema oscuro reutiliza los tokens
+  `brand-50/100` con semántica de superficie («legacy-named tokens»);
+  si la paleta crece, conviene renombrar a tokens semánticos
+  (`surface`, `border`) para evitar confusión.
+
 ## 2026-08-16 — Pasada de limpieza del panel de inicio
 
 - `recentAverages` reescrita con un helper `average`: elimina la media
