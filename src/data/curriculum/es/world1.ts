@@ -17,6 +17,7 @@ export const WORLD_1: Lesson[] = [
     introducedKeys: ["f", "j"],
     practicedKeys: ["f", "j"],
     xp: 20,
+    tip: "Coloca los índices en F y J: las marcas táctiles te ayudan a encontrarlas sin mirar.",
     exercises: [
       { type: "drill", text: "fff jjj fff jjj" },
       { type: "drill", text: "fj fj jf jf fj jf" },
@@ -32,6 +33,7 @@ export const WORLD_1: Lesson[] = [
     introducedKeys: [],
     practicedKeys: ["f", "j"],
     xp: 15,
+    tip: "Espalda recta, muñecas flotando y mirada en la pantalla, no en las manos.",
     exercises: [
       { type: "drill", text: "fj jf fj jf fj jf fj jf" },
       { type: "drill", text: "ffj jjf fjj jff fjf jfj" },
@@ -47,6 +49,7 @@ export const WORLD_1: Lesson[] = [
     introducedKeys: ["d", "k"],
     practicedKeys: ["d", "k", "f", "j"],
     xp: 20,
+    tip: "D y K son de los dedos corazón. Cada dedo tiene sus teclas: deja que aprendan su camino.",
     exercises: [
       { type: "drill", text: "ddd kkk ddd kkk" },
       { type: "drill", text: "dk kd dk kd fd jk fd jk" },
@@ -62,6 +65,7 @@ export const WORLD_1: Lesson[] = [
     introducedKeys: [],
     practicedKeys: ["f", "j", "d", "k"],
     xp: 15,
+    tip: "Escribe despacio y parejo. La velocidad es hija de la precisión, nunca al revés.",
     exercises: [
       { type: "drill", text: "fjdk dkfj kdjf jfkd fjdk" },
       { type: "drill", text: "fkd jdk fjk dkj kfd jkf" },
@@ -77,6 +81,7 @@ export const WORLD_1: Lesson[] = [
     introducedKeys: ["s", "l"],
     practicedKeys: ["s", "l", "d", "k", "f", "j"],
     xp: 20,
+    tip: "S y L pertenecen a los anulares, dedos torpes al principio. Es normal: paciencia.",
     exercises: [
       { type: "drill", text: "sss lll sss lll" },
       { type: "drill", text: "sl ls sl ls sd lk sd lk" },
@@ -92,6 +97,7 @@ export const WORLD_1: Lesson[] = [
     introducedKeys: [],
     practicedKeys: ["s", "l", "d", "k", "f", "j"],
     xp: 15,
+    tip: "Si te equivocas mucho, baja el ritmo un poco. Un error corregido también enseña.",
     exercises: [
       { type: "drill", text: "sdfj lkjd sljk fdsl jkls" },
       { type: "drill", text: "sdf jkl sdf jkl fds lkj" },
@@ -107,6 +113,7 @@ export const WORLD_1: Lesson[] = [
     introducedKeys: ["a", "ñ"],
     practicedKeys: ["a", "ñ", "s", "l", "d", "k", "f", "j"],
     xp: 20,
+    tip: "A y Ñ son de los meñiques, los más débiles. La Ñ es tuya: ningún teclado inglés la tiene.",
     exercises: [
       { type: "drill", text: "aaa ñññ aaa ñññ" },
       { type: "drill", text: "añ ña añ ña as ñl as ñl" },
@@ -122,6 +129,7 @@ export const WORLD_1: Lesson[] = [
     introducedKeys: [],
     practicedKeys: ["a", "s", "d", "f", "j", "k", "l", "ñ"],
     xp: 25,
+    tip: "Tus primeras palabras reales. Léelas enteras antes de escribirlas.",
     exercises: [
       { type: "words", text: "sal las asa alas sala" },
       { type: "words", text: "falda salsa fajas faldas" },
@@ -137,6 +145,7 @@ export const WORLD_1: Lesson[] = [
     introducedKeys: ["g", "h"],
     practicedKeys: ["g", "h", "f", "j", "a", "l"],
     xp: 20,
+    tip: "G y H se alcanzan estirando los índices desde F y J, sin mover el resto de la mano.",
     exercises: [
       { type: "drill", text: "ggg hhh ggg hhh" },
       { type: "drill", text: "gh hg gh hg fg jh fg jh" },
@@ -152,6 +161,7 @@ export const WORLD_1: Lesson[] = [
     introducedKeys: [],
     practicedKeys: ["a", "s", "d", "f", "g", "h", "j", "k", "l", "ñ"],
     xp: 25,
+    tip: "Diez teclas sin mirar: ya escribes más letras a ciegas que mucha gente adulta.",
     exercises: [
       { type: "words", text: "gala gasa hada haga salga" },
       { type: "words", text: "gafas salga jalas hallas" },
@@ -167,6 +177,7 @@ export const WORLD_1: Lesson[] = [
     introducedKeys: [],
     practicedKeys: ["a", "s", "d", "f", "g", "h", "j", "k", "l", "ñ"],
     xp: 20,
+    tip: "Repasar no es retroceder: es fijar lo aprendido para siempre.",
     exercises: [
       { type: "drill", text: "asdf ñlkj gh fjdk slañ" },
       { type: "words", text: "sal gasa hada gafas salsa" },
@@ -182,6 +193,7 @@ export const WORLD_1: Lesson[] = [
     introducedKeys: [],
     practicedKeys: ["a", "s", "d", "f", "g", "h", "j", "k", "l", "ñ"],
     xp: 40,
+    tip: "Tu primera prueba de dominio. Respira hondo, precisión primero, y a por ella.",
     exercises: [
       { type: "words", text: "sala salsa gasa hada gafas jala" },
       { type: "words", text: "falda salga hagas alas gala dañas" },

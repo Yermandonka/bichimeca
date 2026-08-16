@@ -34,12 +34,24 @@ Producto de aprendizaje adaptativo completo, no un simple test de velocidad.
 
 - [x] Andamiaje Next.js 15 + TypeScript + Tailwind 4 + Vitest + ESLint.
 - [x] Módulo de métricas con tests deterministas.
-- [x] Página de inicio provisional con identidad inicial.
-- [ ] Motor de escritura (captura de pulsaciones, modos aprendizaje/test).
-- [ ] Modelo de progreso persistente y migraciones.
+- [x] Motor de escritura (modos aprendizaje y test, sin cascadas de error).
+- [x] Modelo de progreso versionado con validación y migraciones seguras.
+- [x] Persistencia localStorage tras interfaz `ProgressStore`.
+- [x] Currículo data-driven validado: 34 lecciones en 3 mundos (fila guía,
+      superior e inferior) con consejos por lección y lecciones largas.
+- [x] Experiencia de lección con teclado virtual ISO-ES y guía de dedos.
+- [x] Captura de teclado robusta (keydown para imprimibles, beforeinput
+      para composición de teclas muertas).
+- [x] Gamificación básica: estrellas, racha, XP; panel de inicio con
+      métricas recientes.
+- [x] Identidad visual "noche eléctrica" + favicon.
+- [x] E2E Playwright (Chromium): lección completa, espacio, errores,
+      persistencia.
 - [ ] Onboarding + prueba de nivel (baseline).
-- [ ] Lecciones, teclado virtual ES-ISO, currículo por mundos.
-- [ ] Motor adaptativo, práctica diaria, estadísticas, logros, ajustes.
+- [ ] Mundos 4+ (mayúsculas, tildes, puntuación, números, fluidez).
+- [ ] Motor adaptativo de teclas débiles y práctica diaria.
+- [ ] Estadísticas con gráficas y heatmap; logros; ajustes con
+      export/import/reset.
 
 Ver `docs/ITERATION_BACKLOG.md` para el orden de trabajo.
 
