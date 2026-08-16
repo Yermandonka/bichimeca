@@ -2,6 +2,16 @@
 
 Auditorías y decisiones importantes, en orden cronológico inverso.
 
+## 2026-08-16 — Pasada de limpieza del currículo (mundo 1)
+
+- El módulo llegó limpio: separación correcta entre contenido
+  (`src/data/curriculum/`) y validación (`src/domain/curriculum/`), con el
+  contenido dependiendo hacia dentro de los tipos del dominio. Sin cambios
+  estructurales.
+- Endurecimiento de tests del validador: orden duplicado, más de dos teclas
+  introducidas y un solo problema por ejercicio con caracteres no
+  disponibles. Cobertura del dominio: 100 % en todo; 95 tests.
+
 ## 2026-08-16 — Pasada de limpieza del modelo de progreso
 
 - Extraído `src/domain/progress/guards.ts` con los guardas estructurales

@@ -84,6 +84,35 @@ describe("validateCurriculum", () => {
     expect(problems.some((p) => /duplicad/i.test(p))).toBe(true);
   });
 
+  it("flags duplicate lesson orders", () => {
+    const problems = validateCurriculum([
+      lesson({ id: "a", order: 1 }),
+      lesson({ id: "b", order: 1 }),
+    ]);
+    expect(problems.some((p) => /orden 1 duplicado/.test(p))).toBe(true);
+  });
+
+  it("flags lessons that introduce more than two keys", () => {
+    const problems = validateCurriculum([
+      lesson({
+        introducedKeys: ["f", "j", "d"],
+        practicedKeys: ["f", "j", "d"],
+        exercises: [{ type: "drill", text: "fjd" }],
+      }),
+    ]);
+    expect(problems.some((p) => /máximo 2/.test(p))).toBe(true);
+  });
+
+  it("reports at most one unavailable-character problem per exercise", () => {
+    const problems = validateCurriculum([
+      lesson({
+        introducedKeys: ["f", "j"],
+        exercises: [{ type: "drill", text: "fjaq" }],
+      }),
+    ]);
+    expect(problems).toHaveLength(1);
+  });
+
   it("flags lessons whose practiced keys were never introduced", () => {
     const problems = validateCurriculum([
       lesson({ practicedKeys: ["f", "j", "q"] }),
