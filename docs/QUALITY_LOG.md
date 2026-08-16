@@ -2,6 +2,22 @@
 
 Auditorías y decisiones importantes, en orden cronológico inverso.
 
+## 2026-08-16 — Pasada de limpieza del motor de métricas
+
+- Deduplicación en `src/domain/metrics/metrics.ts`: helper común de
+  caracteres→PPM (`ppm`/`rawPpm`) y de fracción 0..1 con clamp
+  (`accuracy`/`errorRate`).
+- Eliminada la guarda muerta `med <= 0` en `consistencyScore` (los
+  intervalos válidos son estrictamente positivos).
+- Endurecimiento por mutación (manual; no hay herramienta de mutación
+  sancionada para TypeScript): tests nuevos para entradas negativas,
+  clamps 0..1, el límite exacto de `MIN_INTERVALS_FOR_CONSISTENCY` y la
+  mediana con número impar de intervalos.
+- Cobertura acotada a módulos testeables (`src/domain/**`) en
+  `vitest.config.ts`; añadido `@vitest/coverage-v8`. Resultado: 100 %
+  de líneas, ramas y funciones en el dominio; 31 tests.
+- `coverage/` ignorado en git y eslint.
+
 ## 2026-08-16 — Línea base inicial
 
 - Repo previo: solo infraestructura SwarmForge; sin código de aplicación.

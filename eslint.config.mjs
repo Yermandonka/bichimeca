@@ -25,6 +25,7 @@ const eslintConfig = [
       "next-env.d.ts",
       ".next/**",
       "out/**",
+      "coverage/**",
       ".worktrees/**",
       "tmp/**",
       ".tools/**",
