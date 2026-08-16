@@ -51,17 +51,8 @@ export default function MagiaPage() {
   const lastSpawnRef = useRef(0);
   const fieldRef = useRef<HTMLDivElement>(null);
 
-  const pool = useMemo(
-    () => (progress ? gameWordPool(CURRICULUM_ES, progress) : []),
-    [progress],
-  );
-  const base = useMemo(
-    () =>
-      progress
-        ? gameDifficulty(CURRICULUM_ES, progress)
-        : { world: 1, fallMs: 9000, spawnMs: 3400, maxItems: 3 },
-    [progress],
-  );
+  const pool = useMemo(() => gameWordPool(CURRICULUM_ES, progress), [progress]);
+  const base = useMemo(() => gameDifficulty(CURRICULUM_ES, progress), [progress]);
   // Stars glow a bit longer than ships fall: catching, not shooting.
   const lifeMs = base.fallMs * 1.15;
 

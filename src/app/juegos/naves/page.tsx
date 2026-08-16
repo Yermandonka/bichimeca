@@ -52,17 +52,8 @@ export default function NavesPage() {
   const lastSpawnRef = useRef(0);
   const fieldRef = useRef<HTMLDivElement>(null);
 
-  const pool = useMemo(
-    () => (progress ? gameWordPool(CURRICULUM_ES, progress) : []),
-    [progress],
-  );
-  const base = useMemo(
-    () =>
-      progress
-        ? gameDifficulty(CURRICULUM_ES, progress)
-        : { world: 1, fallMs: 9000, spawnMs: 3400, maxItems: 3 },
-    [progress],
-  );
+  const pool = useMemo(() => gameWordPool(CURRICULUM_ES, progress), [progress]);
+  const base = useMemo(() => gameDifficulty(CURRICULUM_ES, progress), [progress]);
 
   const wave = Math.floor(kills / KILLS_PER_WAVE) + 1;
   const speedup = Math.pow(0.88, wave - 1);

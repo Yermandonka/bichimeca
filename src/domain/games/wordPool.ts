@@ -32,11 +32,15 @@ export function unlockedKeys(
   return keys;
 }
 
-/** Unique typing tokens (length ≥ 2) available to the learner right now. */
+/**
+ * Unique typing tokens (length ≥ 2) available to the learner right now.
+ * Null progress (still loading) yields an empty pool.
+ */
 export function gameWordPool(
   curriculum: Lesson[],
-  progress: ProgressData,
+  progress: ProgressData | null,
 ): string[] {
+  if (progress === null) return [];
   const keys = unlockedKeys(curriculum, progress);
   const pool = new Set<string>();
   for (const lesson of reachedLessons(curriculum, progress)) {
@@ -72,11 +76,15 @@ const LEVELS: Record<number, Omit<GameDifficulty, "world">> = {
 
 const HARDEST = Math.max(...Object.keys(LEVELS).map(Number));
 
-/** Difficulty for the learner's current world (capped at the hardest level). */
+/**
+ * Difficulty for the learner's current world (capped at the hardest level).
+ * Null progress (still loading) gets the gentlest level.
+ */
 export function gameDifficulty(
   curriculum: Lesson[],
-  progress: ProgressData,
+  progress: ProgressData | null,
 ): GameDifficulty {
+  if (progress === null) return { world: 1, ...LEVELS[1] };
   const reached = reachedLessons(curriculum, progress);
   const world = reached.length > 0 ? reached[reached.length - 1].world : 1;
   const level = LEVELS[Math.min(world, HARDEST)] ?? LEVELS[1];
