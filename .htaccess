@@ -1,0 +1,13 @@
+RewriteEngine On
+
+# Serve the static Next.js export while keeping /bichimeca as the public URL.
+RewriteRule ^$ out/index.html [L]
+
+RewriteCond %{REQUEST_URI} ^/bichimeca/(.*)$
+RewriteCond %{DOCUMENT_ROOT}/bichimeca/out/%1 -f [OR]
+RewriteCond %{DOCUMENT_ROOT}/bichimeca/out/%1 -d
+RewriteRule ^(.*)$ out/$1 [L]
+
+# Map clean exported routes such as /curso/ to their generated index pages.
+RewriteCond %{DOCUMENT_ROOT}/bichimeca/out/$1/index.html -f
+RewriteRule ^(.+?)/?$ out/$1/index.html [L]
