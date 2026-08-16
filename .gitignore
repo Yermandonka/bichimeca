@@ -18,3 +18,6 @@ build/
 # Logs and local files
 *.log
 .DS_Store
+tmp/
+next-env.d.ts
+*.tsbuildinfo
