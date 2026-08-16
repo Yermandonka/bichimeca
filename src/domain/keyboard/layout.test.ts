@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { KEYBOARD_ROWS, FINGER_LABELS, keyForChar } from "./layout";
+import { KEYBOARD_ROWS, FINGER_LABELS, SPACE_KEY, keyForChar } from "./layout";
 import { CURRICULUM_ES } from "@/data/curriculum/es";
 
 describe("KEYBOARD_ROWS (ISO-ES)", () => {
@@ -26,6 +26,28 @@ describe("KEYBOARD_ROWS (ISO-ES)", () => {
   it("has no duplicate characters", () => {
     const chars = KEYBOARD_ROWS.flat().map((key) => key.char);
     expect(new Set(chars).size).toBe(chars.length);
+  });
+
+  it("assigns fingers in the standard touch-typing pattern on every row", () => {
+    const pattern = [
+      "menique-izq",
+      "anular-izq",
+      "corazon-izq",
+      "indice-izq",
+      "indice-izq",
+      "indice-der",
+      "indice-der",
+      "corazon-der",
+      "anular-der",
+      "menique-der",
+    ];
+    for (const row of KEYBOARD_ROWS) {
+      expect(row.map((key) => key.finger)).toEqual(pattern);
+    }
+  });
+
+  it("assigns the space bar to the thumb", () => {
+    expect(SPACE_KEY.finger).toBe("pulgar");
   });
 });
 

@@ -2,6 +2,15 @@
 
 Auditorías y decisiones importantes, en orden cronológico inverso.
 
+## 2026-08-16 — Pasada de limpieza del teclado virtual
+
+- El módulo llegó limpio: modelo puro del teclado en dominio, componente
+  visual como límite de UI y cross-check contra el currículo en tests. Sin
+  cambios estructurales ni de código.
+- Endurecimiento: test del patrón estándar de dedos aplicado a las tres
+  filas (fija la asignación de cada tecla, no solo la fila guía) y del
+  pulgar para la barra espaciadora. Todo al 100 %; 154 tests.
+
 ## 2026-08-16 — Pasada de limpieza de gamificación
 
 - `practiceStreak` simplificada: eliminadas dos salidas tempranas
