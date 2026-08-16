@@ -96,3 +96,18 @@ describe("isLessonUnlocked", () => {
     );
   });
 });
+
+describe("selectors with an unsorted curriculum array", () => {
+  const SHUFFLED = [lesson("l3", 3), lesson("l1", 1), lesson("l2", 2)];
+
+  it("currentLessonId follows lesson order, not array order", () => {
+    expect(currentLessonId(SHUFFLED, createEmptyProgress(NOW))).toBe("l1");
+    expect(currentLessonId(SHUFFLED, progressWithCompleted("l1"))).toBe("l2");
+  });
+
+  it("isLessonUnlocked resolves the predecessor by lesson order", () => {
+    expect(isLessonUnlocked(SHUFFLED, createEmptyProgress(NOW), "l1")).toBe(true);
+    expect(isLessonUnlocked(SHUFFLED, createEmptyProgress(NOW), "l2")).toBe(false);
+    expect(isLessonUnlocked(SHUFFLED, progressWithCompleted("l1"), "l2")).toBe(true);
+  });
+});

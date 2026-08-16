@@ -1,6 +1,10 @@
 import type { Lesson } from "@/domain/curriculum/types";
 import type { ProgressData } from "./progress";
 
+function byOrder(curriculum: Lesson[]): Lesson[] {
+  return [...curriculum].sort((a, b) => a.order - b.order);
+}
+
 /** Distinct lesson ids with at least one completed session. */
 export function completedLessonIds(progress: ProgressData): Set<string> {
   return new Set(progress.sessions.map((session) => session.lessonId));
@@ -12,8 +16,7 @@ export function currentLessonId(
   progress: ProgressData,
 ): string | null {
   const completed = completedLessonIds(progress);
-  const ordered = [...curriculum].sort((a, b) => a.order - b.order);
-  const next = ordered.find((lesson) => !completed.has(lesson.id));
+  const next = byOrder(curriculum).find((lesson) => !completed.has(lesson.id));
   return next ? next.id : null;
 }
 
@@ -26,7 +29,7 @@ export function isLessonUnlocked(
   progress: ProgressData,
   lessonId: string,
 ): boolean {
-  const ordered = [...curriculum].sort((a, b) => a.order - b.order);
+  const ordered = byOrder(curriculum);
   const index = ordered.findIndex((lesson) => lesson.id === lessonId);
   if (index === -1) return false;
   if (index === 0) return true;

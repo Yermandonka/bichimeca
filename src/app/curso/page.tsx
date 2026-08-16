@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { CURRICULUM_ES } from "@/data/curriculum/es";
+import type { LessonType } from "@/domain/curriculum/types";
 import {
   completedLessonIds,
   currentLessonId,
@@ -9,7 +10,7 @@ import {
 } from "@/domain/progress/selectors";
 import { useProgress } from "../providers";
 
-const LESSON_TYPE_LABELS: Record<string, string> = {
+const LESSON_TYPE_LABELS: Record<LessonType, string> = {
   learn: "Nuevas teclas",
   "guided-drill": "Ritmo",
   "combo-drill": "Combinaciones",
@@ -82,7 +83,7 @@ export default function CursoPage() {
               <div className="min-w-0">
                 <p className="font-semibold text-ink-900">{lesson.title}</p>
                 <p className="text-sm text-ink-600">
-                  {LESSON_TYPE_LABELS[lesson.type] ?? lesson.type}
+                  {LESSON_TYPE_LABELS[lesson.type]}
                   {lesson.introducedKeys.length > 0 &&
                     ` · ${lesson.introducedKeys
                       .map((key) => key.toUpperCase())
