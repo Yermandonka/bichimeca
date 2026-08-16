@@ -13,6 +13,8 @@
  * All functions must return finite numbers or null — never NaN/Infinity.
  */
 
+import { median } from "./stats";
+
 export const CHARS_PER_WORD = 5;
 
 /** Minimum inter-keystroke intervals required before rhythm is meaningful. */
@@ -61,11 +63,6 @@ export function errorRate(input: {
   return fractionOf(input.errors, input.totalKeystrokes);
 }
 
-function median(sorted: number[]): number {
-  const mid = Math.floor(sorted.length / 2);
-  return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
-}
-
 /**
  * Rhythm consistency score in 0..100 from inter-keystroke intervals (ms).
  *
@@ -78,12 +75,9 @@ export function consistencyScore(intervalsMs: number[]): number | null {
   const valid = intervalsMs.filter((interval) => interval > 0);
   if (valid.length < MIN_INTERVALS_FOR_CONSISTENCY) return null;
 
-  const sorted = [...valid].sort((a, b) => a - b);
   // `valid` holds only positive intervals, so the median is always positive.
-  const med = median(sorted);
-
-  const deviations = valid.map((interval) => Math.abs(interval - med)).sort((a, b) => a - b);
-  const mad = median(deviations);
+  const med = median(valid);
+  const mad = median(valid.map((interval) => Math.abs(interval - med)));
   const relativeDispersion = mad / med;
 
   const score = 100 * (1 - relativeDispersion);

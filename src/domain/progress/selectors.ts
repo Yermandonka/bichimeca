@@ -1,9 +1,6 @@
+import { byOrder } from "@/domain/curriculum/ordering";
 import type { Lesson } from "@/domain/curriculum/types";
 import type { ProgressData } from "./progress";
-
-function byOrder(curriculum: Lesson[]): Lesson[] {
-  return [...curriculum].sort((a, b) => a.order - b.order);
-}
 
 /** Distinct lesson ids with at least one completed session. */
 export function completedLessonIds(progress: ProgressData): Set<string> {

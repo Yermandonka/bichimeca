@@ -73,6 +73,27 @@ describe("mergeSessionKeyStats", () => {
     );
   });
 
+  it("keeps both EWMAs when a key has no attempts in the session", () => {
+    const existing = {
+      f: {
+        attempts: 10,
+        correct: 5,
+        errors: 5,
+        latencyEwmaMs: 500,
+        accuracyEwma: 0.5,
+        lastPracticedAt: "2026-08-10T00:00:00.000Z",
+      },
+    };
+    const merged = mergeSessionKeyStats(
+      existing,
+      new Map([["f", sessionStats({ attempts: 0, correct: 0, errors: 0, latenciesMs: [] })]]),
+      NOW,
+    );
+    expect(merged.f.accuracyEwma).toBe(0.5);
+    expect(merged.f.latencyEwmaMs).toBe(500);
+    expect(merged.f.lastPracticedAt).toBe(NOW);
+  });
+
   it("does not touch keys absent from the session", () => {
     const existing = {
       j: {
