@@ -2,6 +2,20 @@
 
 Auditorías y decisiones importantes, en orden cronológico inverso.
 
+## 2026-08-16 — Pasada de limpieza de pantalla completa, pausa y récords
+
+- Extraído `src/infrastructure/storage/recordStore.ts` (`loadRecord`,
+  `submitScore`): la lógica de récord por juego estaba duplicada en
+  `naves` y `magia` con acceso directo a localStorage desde la UI. Ahora
+  vive tras el mismo límite de persistencia que `progressStore`, con
+  tests de valores corruptos, primer récord y récord no superado.
+- El callback `finish` de ambos juegos pierde su dependencia del estado
+  `record` (el adaptador lee el valor persistido).
+- Entrega restante (pantalla completa, pausa con desplazamiento de anclas
+  temporales, camino del curso, `.htaccess` de despliegue): UI e
+  infraestructura de despliegue del coder; sin cambios.
+- 201 tests; todo al 100 % de cobertura.
+
 ## 2026-08-16 — Pasada de limpieza de dinámicas de juego
 
 - `lockOn.ts` llegó como máquina de estados pura y bien testeada; sin
