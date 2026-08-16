@@ -8,6 +8,7 @@ import {
   currentLessonId,
   isLessonUnlocked,
 } from "@/domain/progress/selectors";
+import { lessonStars } from "@/domain/gamification/gamification";
 import { useProgress } from "../providers";
 
 const LESSON_TYPE_LABELS: Record<LessonType, string> = {
@@ -90,6 +91,26 @@ export default function CursoPage() {
                       .join(" y ")}`}
                 </p>
               </div>
+              {isCompleted && (
+                <span
+                  className="ml-auto text-lg tracking-wide"
+                  aria-label={`${lessonStars(progress, lesson.id)} de 3 estrellas`}
+                >
+                  {[1, 2, 3].map((star) => (
+                    <span
+                      key={star}
+                      aria-hidden="true"
+                      className={
+                        star <= lessonStars(progress, lesson.id)
+                          ? "text-brand-500"
+                          : "text-ink-900/15"
+                      }
+                    >
+                      ★
+                    </span>
+                  ))}
+                </span>
+              )}
               {isCurrent && (
                 <span className="ml-auto rounded-full bg-brand-500 px-3 py-1 text-xs font-semibold text-white">
                   Continuar

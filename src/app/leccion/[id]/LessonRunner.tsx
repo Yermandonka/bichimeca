@@ -23,6 +23,7 @@ import {
 } from "@/domain/metrics/format";
 import { nextLessonAfter } from "@/domain/curriculum/ordering";
 import { appendSession } from "@/domain/progress/progress";
+import { starsForAccuracy } from "@/domain/gamification/gamification";
 import { mergeSessionKeyStats } from "@/domain/progress/keyStats";
 import { useProgress } from "@/app/providers";
 
@@ -124,6 +125,24 @@ export function LessonRunner({ lesson }: { lesson: Lesson }) {
           Lección completada
         </p>
         <h2 className="mt-1 text-2xl font-bold">{lesson.title}</h2>
+        <p
+          className="mt-3 text-3xl tracking-widest"
+          aria-label={`${starsForAccuracy(totals.accuracy)} de 3 estrellas`}
+        >
+          {[1, 2, 3].map((star) => (
+            <span
+              key={star}
+              aria-hidden="true"
+              className={
+                star <= starsForAccuracy(totals.accuracy)
+                  ? "text-brand-500"
+                  : "text-ink-900/15"
+              }
+            >
+              ★
+            </span>
+          ))}
+        </p>
         <dl className="mt-6 grid grid-cols-2 gap-4 text-left">
           <div className="rounded-2xl bg-brand-50 p-4">
             <dt className="text-sm text-ink-600">Velocidad</dt>
