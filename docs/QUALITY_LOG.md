@@ -2,6 +2,21 @@
 
 Auditorías y decisiones importantes, en orden cronológico inverso.
 
+## 2026-08-16 — Pasada de limpieza de persistencia y selectores
+
+- `selectors.ts`: extraído `byOrder` para no duplicar la ordenación del
+  currículo; tests nuevos con el array desordenado que fijan que la lógica
+  sigue el campo `order` y no el orden del array.
+- Cobertura ampliada a `src/infrastructure/**` (el adaptador de storage es
+  testeable por inyección). Todo al 100 %; 111 tests.
+- `LESSON_TYPE_LABELS` tipado como `Record<LessonType, string>`: una
+  etiqueta que falte rompe la compilación en vez de caer en silencio al
+  identificador interno.
+- Observación para el coder (sin cambio): `progressStore.save` no captura
+  `QuotaExceededError` de localStorage; si el guardado falla lanzaría dentro
+  del updater de React. Dado que la pérdida de progreso es P0, conviene
+  decidir una estrategia (capturar y avisar, o reintentar).
+
 ## 2026-08-16 — Pasada de limpieza del currículo (mundo 1)
 
 - El módulo llegó limpio: separación correcta entre contenido

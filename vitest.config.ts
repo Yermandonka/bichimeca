@@ -13,7 +13,7 @@ export default defineConfig({
     coverage: {
       // Only pure, testable modules participate in coverage; the Next.js
       // app shell and framework config are the untestable boundary.
-      include: ["src/domain/**/*.ts"],
+      include: ["src/domain/**/*.ts", "src/infrastructure/**/*.ts"],
       exclude: ["src/**/*.test.ts"],
     },
   },
