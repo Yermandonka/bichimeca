@@ -26,6 +26,7 @@ import { appendSession } from "@/domain/progress/progress";
 import { starsForAccuracy } from "@/domain/gamification/gamification";
 import { mergeSessionKeyStats } from "@/domain/progress/keyStats";
 import { useProgress } from "@/app/providers";
+import { VirtualKeyboard } from "./VirtualKeyboard";
 
 export function LessonRunner({ lesson }: { lesson: Lesson }) {
   const { progress, updateProgress } = useProgress();
@@ -281,6 +282,11 @@ export function LessonRunner({ lesson }: { lesson: Lesson }) {
           }}
         />
       </div>
+
+      <VirtualKeyboard
+        expectedChar={session.text[session.position] ?? null}
+        hasError={session.currentPositionErrored}
+      />
 
       <p className="mt-4 text-center text-sm text-ink-400">
         Escribe el texto. Los errores no avanzan: pulsa la tecla correcta para

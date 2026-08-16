@@ -34,6 +34,12 @@ Puntuación orientativa: Impacto × Confianza / Esfuerzo (1–5).
 
 ## Hecho
 
+- 2026-08-16 — Teclado virtual ISO-ES (`src/domain/keyboard/layout.ts` +
+  componente): tres filas de letras con ñ y barra espaciadora, dedo asignado
+  por tecla, anclas F/J marcadas, resaltado de tecla esperada y estado de
+  error (nunca solo color), nombre del dedo bajo el teclado; tests de
+  cobertura del currículo completo. Corregida la barra espaciadora
+  (keydown explícito, sin depender de beforeinput).
 - 2026-08-16 — Experiencia de lección interactiva (LessonRunner con
   beforeinput para caracteres compuestos, resultados con métricas y XP,
   guardado único) + fusión EWMA de estadísticas por tecla.
