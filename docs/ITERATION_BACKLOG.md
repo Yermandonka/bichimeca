@@ -7,9 +7,10 @@ Puntuación orientativa: Impacto × Confianza / Esfuerzo (1–5).
 ## P1 — núcleo de aprendizaje
 
 1. ~~Motor de escritura~~ — hecho (modos aprendizaje y test).
-2. **Modelo de progreso + persistencia** (5×5/3): esquema versionado
-   (SchemaVersion, LearnerProfile, SessionHistory, KeyStatistics…), capa de
-   persistencia con abstracción localStorage/IndexedDB, tests de migración.
+2. **Persistencia en navegador** (5×5/2): adaptador
+   localStorage/IndexedDB sobre el esquema versionado ya implementado en
+   `src/domain/progress/` (validación + migraciones hechas); export/import
+   UI llega con Ajustes.
 3. **Experiencia de lección + teclado virtual ES-ISO** (5×4/4): pantalla de
    lección, resaltado de tecla/dedo, pantalla de resultados.
 4. **Currículo por mundos** (5×4/4): capa de contenido data-driven
@@ -34,6 +35,12 @@ Puntuación orientativa: Impacto × Confianza / Esfuerzo (1–5).
 
 ## Hecho
 
+- 2026-08-16 — Esquema de progreso versionado (`src/domain/progress/`):
+  ProgressData v1 (perfil con nombre/apodo configurables, ajustes, sesiones,
+  estadísticas por tecla, baseline inmutable, XP), validación estructural de
+  importaciones (solo datos, nunca ejecución; rechaza NaN/negativos/ids
+  duplicados/contadores imposibles) y migraciones por pasos que fallan de
+  forma explícita en lugar de borrar datos; 14 tests.
 - 2026-08-16 — Motor de escritura (modo test): avance con error sin
   cascadas (alineado por posición), backspace real, errores contados una vez
   en el momento del fallo y nunca borrados, posiciones limpias/corregidas
