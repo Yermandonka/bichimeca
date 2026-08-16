@@ -6,10 +6,7 @@ Puntuación orientativa: Impacto × Confianza / Esfuerzo (1–5).
 
 ## P1 — núcleo de aprendizaje
 
-1. **Motor de escritura — modo test** (5×5/2): completar
-   `src/domain/engine/` con modo test (avance con error, backspace real,
-   corrección sobre buffer final) para pruebas de nivel y tests formales.
-   El modo aprendizaje ya está implementado y testeado.
+1. ~~Motor de escritura~~ — hecho (modos aprendizaje y test).
 2. **Modelo de progreso + persistencia** (5×5/3): esquema versionado
    (SchemaVersion, LearnerProfile, SessionHistory, KeyStatistics…), capa de
    persistencia con abstracción localStorage/IndexedDB, tests de migración.
@@ -37,6 +34,10 @@ Puntuación orientativa: Impacto × Confianza / Esfuerzo (1–5).
 
 ## Hecho
 
+- 2026-08-16 — Motor de escritura (modo test): avance con error sin
+  cascadas (alineado por posición), backspace real, errores contados una vez
+  en el momento del fallo y nunca borrados, posiciones limpias/corregidas
+  juzgadas sobre el buffer final; 10 tests.
 - 2026-08-16 — Motor de escritura (modo aprendizaje) en
   `src/domain/engine/session.ts`: sesión pura y determinista, sin cascadas de
   error, posiciones limpias vs corregidas, estadísticas y latencias por tecla

@@ -24,6 +24,19 @@ import {
  * - Key latency runs from the moment a position becomes ready (previous
  *   position completed, or first input for the opening position) until the
  *   correct press.
+ *
+ * Test mode rules (real-typing behavior, position-aligned so a single
+ * mistake still cannot cascade):
+ * - Any character advances into the buffer; errors are counted once, at
+ *   input time, attributed to the expected key, and are never erased by a
+ *   later backspace.
+ * - Backspace deletes the last buffer character (safe no-op when empty) and
+ *   is not counted as a keystroke.
+ * - Clean/corrected positions are judged against the final buffer: a
+ *   position is "clean" when its final character is correct and it never
+ *   errored, "corrected" when its final character is correct after a
+ *   mistake; an uncorrected wrong character counts in neither.
+ * - The session completes when the buffer reaches the target length.
  */
 
 export type ExerciseMode = "learning" | "test";
@@ -51,6 +64,10 @@ export interface Session {
   readonly lastEventMs: number | null;
   readonly readySinceMs: number | null;
   readonly keystrokeTimesMs: readonly number[];
+  /** Test mode only: characters currently in the buffer. */
+  readonly buffer: readonly string[];
+  /** Test mode only: positions that errored at input time (never erased). */
+  readonly erroredPositions: ReadonlySet<number>;
 }
 
 export interface SessionSummary {
@@ -86,7 +103,24 @@ export function createSession(input: {
     lastEventMs: null,
     readySinceMs: null,
     keystrokeTimesMs: [],
+    buffer: [],
+    erroredPositions: new Set(),
   };
+}
+
+function judgeBufferPositions(
+  text: string,
+  buffer: readonly string[],
+  erroredPositions: ReadonlySet<number>,
+): { cleanPositions: number; correctedPositions: number } {
+  let clean = 0;
+  let corrected = 0;
+  buffer.forEach((char, i) => {
+    if (char !== text[i]) return;
+    if (erroredPositions.has(i)) corrected += 1;
+    else clean += 1;
+  });
+  return { cleanPositions: clean, correctedPositions: corrected };
 }
 
 function cloneStats(
@@ -107,7 +141,15 @@ export function handleInput(
   event: { char: string; timeMs: number },
 ): Session {
   if (session.isComplete) return session;
+  return session.mode === "test"
+    ? handleTestInput(session, event)
+    : handleLearningInput(session, event);
+}
 
+function handleLearningInput(
+  session: Session,
+  event: { char: string; timeMs: number },
+): Session {
   const expected = session.text[session.position];
   const readySinceMs = session.readySinceMs ?? event.timeMs;
   const [keyStats, stats] = cloneStats(session.keyStats, expected);
@@ -148,13 +190,64 @@ export function handleInput(
   };
 }
 
+function handleTestInput(
+  session: Session,
+  event: { char: string; timeMs: number },
+): Session {
+  const positionIndex = session.buffer.length;
+  const expected = session.text[positionIndex];
+  const readySinceMs = session.readySinceMs ?? event.timeMs;
+  const [keyStats, stats] = cloneStats(session.keyStats, expected);
+  stats.attempts += 1;
+
+  const correct = event.char === expected;
+  const erroredPositions = correct
+    ? session.erroredPositions
+    : new Set(session.erroredPositions).add(positionIndex);
+  if (correct) {
+    stats.correct += 1;
+    stats.latenciesMs.push(event.timeMs - readySinceMs);
+  } else {
+    stats.errors += 1;
+  }
+
+  const buffer = [...session.buffer, event.char];
+  return {
+    ...session,
+    keyStats,
+    buffer,
+    erroredPositions,
+    position: buffer.length,
+    isComplete: buffer.length === session.text.length,
+    totalKeystrokes: session.totalKeystrokes + 1,
+    correctKeystrokes: session.correctKeystrokes + (correct ? 1 : 0),
+    errors: session.errors + (correct ? 0 : 1),
+    ...judgeBufferPositions(session.text, buffer, erroredPositions),
+    firstEventMs: session.firstEventMs ?? event.timeMs,
+    lastEventMs: event.timeMs,
+    readySinceMs: event.timeMs,
+    keystrokeTimesMs: [...session.keystrokeTimesMs, event.timeMs],
+  };
+}
+
 export function handleBackspace(
   session: Session,
-  _event: { timeMs: number },
+  event: { timeMs: number },
 ): Session {
   // In learning mode a wrong key never enters the buffer, so there is
   // nothing to delete; backspace is intentionally inert and uncounted.
-  return session;
+  if (session.mode !== "test") return session;
+  if (session.buffer.length === 0 || session.isComplete) return session;
+
+  const buffer = session.buffer.slice(0, -1);
+  return {
+    ...session,
+    buffer,
+    position: buffer.length,
+    ...judgeBufferPositions(session.text, buffer, session.erroredPositions),
+    lastEventMs: event.timeMs,
+    readySinceMs: event.timeMs,
+  };
 }
 
 export function summarize(session: Session): SessionSummary {
