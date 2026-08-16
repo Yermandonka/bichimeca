@@ -2,6 +2,19 @@
 
 Auditorías y decisiones importantes, en orden cronológico inverso.
 
+## 2026-08-16 — Pasada de limpieza del modelo de progreso
+
+- Extraído `src/domain/progress/guards.ts` con los guardas estructurales
+  compartidos; `validate.ts` y `migrations.ts` dependen de él en lugar de
+  duplicar comprobaciones y mensajes.
+- `MigrationResult` ahora es alias de `ValidationResult` (misma forma).
+- La comprobación de avance de versión en migraciones usa `isFiniteNumber`
+  (un paso que devuelva `NaN` falla rápido con mensaje claro).
+- Tests tabulares que cubren todas las ramas de rechazo de `validateProgress`
+  (perfil, ajustes, sesiones, teclas, baseline, ids duplicados) y de
+  `migrateToCurrent` (contenido no objeto, versión inválida, paso que no
+  avanza). Cobertura del dominio: 100 % en todo; 79 tests.
+
 ## 2026-08-16 — Pasada de limpieza del motor de escritura
 
 - `src/domain/engine/session.ts`: sustituido el patrón de clonado con
