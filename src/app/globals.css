@@ -1,18 +1,45 @@
 @import "tailwindcss";
 
+/*
+ * Bichimeca visual identity — "noche eléctrica".
+ * Dark violet-black canvas, fiery coral primary, mint for progress and
+ * warm sun-yellow for rewards. Chunky borders and hard offset shadows
+ * give the product its deliberately bold, non-generic personality.
+ */
 @theme {
-  --color-brand-50: #fdf7ef;
-  --color-brand-100: #f9ecd9;
-  --color-brand-500: #e8843a;
-  --color-brand-600: #d96f24;
-  --color-brand-700: #b4581b;
-  --color-ink-900: #241f1a;
-  --color-ink-600: #5c534a;
-  --color-ink-400: #8a7f74;
-  --color-surface: #fffdf9;
+  /* Surfaces (dark violet scale) */
+  --color-noche-950: #14101d;
+  --color-noche-900: #1c1729;
+  --color-noche-800: #2a2340;
+
+  /* Legacy-named tokens used semantically across components */
+  --color-brand-50: #1c1729; /* card surface */
+  --color-brand-100: #2a2340; /* raised surface / soft border */
+  --color-brand-500: #ff5d3b; /* primary accent (fuego) */
+  --color-brand-600: #ff7a5c; /* primary hover */
+  --color-brand-700: #ffb4a1; /* accent text on dark */
+
+  /* Text (crema scale) */
+  --color-ink-900: #f6f1e7;
+  --color-ink-600: #b8b0c9;
+  --color-ink-400: #837a99;
+
+  /* Feedback */
+  --color-menta-400: #2ee6a8; /* progress / correct */
+  --color-sol-400: #ffd23f; /* stars / XP */
 }
 
 body {
-  background-color: var(--color-brand-50);
+  background-color: var(--color-noche-950);
+  background-image: radial-gradient(
+      ellipse 80% 50% at 50% -20%,
+      rgba(255, 93, 59, 0.15),
+      transparent
+    );
   color: var(--color-ink-900);
+}
+
+::selection {
+  background-color: var(--color-brand-500);
+  color: var(--color-noche-950);
 }

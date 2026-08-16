@@ -37,6 +37,8 @@ export interface Lesson {
   practicedKeys: string[];
   xp: number;
   exercises: Exercise[];
+  /** Short technique/posture advice shown when the lesson starts. */
+  tip?: string;
 }
 
 /** Characters always permitted in exercise text besides learned keys. */

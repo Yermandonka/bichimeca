@@ -120,7 +120,7 @@ export function LessonRunner({ lesson }: { lesson: Lesson }) {
     return (
       <section
         role="status"
-        className="mx-auto mt-8 max-w-xl rounded-3xl border border-brand-100 bg-white p-8 text-center shadow-lg"
+        className="mx-auto mt-8 max-w-xl rounded-3xl border border-brand-100 bg-noche-900 p-8 text-center shadow-lg"
       >
         <p className="text-sm font-semibold uppercase tracking-wide text-brand-600">
           Lección completada
@@ -136,7 +136,7 @@ export function LessonRunner({ lesson }: { lesson: Lesson }) {
               aria-hidden="true"
               className={
                 star <= starsForAccuracy(totals.accuracy)
-                  ? "text-brand-500"
+                  ? "text-sol-400"
                   : "text-ink-900/15"
               }
             >
@@ -169,14 +169,14 @@ export function LessonRunner({ lesson }: { lesson: Lesson }) {
           {nextLesson ? (
             <Link
               href={`/leccion/${nextLesson.id}`}
-              className="w-full rounded-full bg-brand-500 px-8 py-3 text-lg font-semibold text-white shadow-md transition hover:bg-brand-600"
+              className="w-full rounded-2xl bg-brand-500 px-8 py-3 text-lg font-bold text-noche-950 shadow-[4px_4px_0_#7a2413] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:bg-brand-600 hover:shadow-[2px_2px_0_#7a2413]"
             >
               Siguiente
             </Link>
           ) : (
             <Link
               href="/curso"
-              className="w-full rounded-full bg-brand-500 px-8 py-3 text-lg font-semibold text-white shadow-md transition hover:bg-brand-600"
+              className="w-full rounded-2xl bg-brand-500 px-8 py-3 text-lg font-bold text-noche-950 shadow-[4px_4px_0_#7a2413] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:bg-brand-600 hover:shadow-[2px_2px_0_#7a2413]"
             >
               Volver al curso
             </Link>
@@ -220,7 +220,7 @@ export function LessonRunner({ lesson }: { lesson: Lesson }) {
       {/* Clicking the text refocuses the hidden input that captures typing. */}
       <div
         onClick={() => inputRef.current?.focus()}
-        className="cursor-text rounded-3xl border border-brand-100 bg-white p-8 shadow-md"
+        className="cursor-text rounded-3xl border-2 border-brand-100 bg-noche-900 p-8 shadow-[6px_6px_0_rgba(0,0,0,0.35)]"
       >
         <p
           aria-label={`Texto a escribir: ${text}`}
@@ -239,7 +239,7 @@ export function LessonRunner({ lesson }: { lesson: Lesson }) {
                     : isCurrent
                       ? "rounded bg-brand-100 text-ink-900 underline decoration-brand-500 decoration-2 underline-offset-4"
                       : isPast
-                        ? "text-brand-600"
+                        ? "text-menta-400"
                         : "text-ink-400"
                 }
               >
@@ -256,6 +256,9 @@ export function LessonRunner({ lesson }: { lesson: Lesson }) {
           value=""
           onChange={() => undefined}
           onBeforeInput={(event) => {
+            // Only composition results (dead keys, IME) reach this handler:
+            // plain printable keys are consumed at keydown below, and their
+            // preventDefault suppresses the corresponding beforeinput.
             const native = event.nativeEvent as InputEvent;
             event.preventDefault();
             if (native.data) {
@@ -270,14 +273,21 @@ export function LessonRunner({ lesson }: { lesson: Lesson }) {
               );
               return;
             }
-            // Space is handled here because some browsers do not deliver a
-            // usable beforeinput for it in an empty controlled input, and its
-            // default action can scroll the page. It never participates in
-            // dead-key composition, so consuming it at keydown is safe; the
-            // preventDefault also guarantees no duplicate beforeinput.
-            if (event.key === " ") {
+            // Consume plain printable keys (single character, no modifier,
+            // not composing) at keydown — the earliest and most reliable
+            // event across browsers; space in particular does not deliver a
+            // usable beforeinput everywhere and would scroll the page.
+            // Dead keys report "Dead"/"Process" (length > 1) or isComposing,
+            // so they fall through to the beforeinput handler above.
+            if (
+              event.key.length === 1 &&
+              !event.ctrlKey &&
+              !event.metaKey &&
+              !event.altKey &&
+              !event.nativeEvent.isComposing
+            ) {
               event.preventDefault();
-              feedChar(" ");
+              feedChar(event.key);
             }
           }}
         />

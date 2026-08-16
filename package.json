@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "verify": "npm run lint && npm run typecheck && npm run test && npm run build"
+    "verify": "npm run lint && npm run typecheck && npm run test && npm run build",
+    "test:e2e": "PLAYWRIGHT_BROWSERS_PATH=$PWD/.tools/pw-browsers playwright test"
   },
   "dependencies": {
     "next": "^15.4.6",
@@ -19,6 +20,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/postcss": "^4.1.11",
     "@types/node": "^22.15.0",
     "@types/react": "^19.1.9",

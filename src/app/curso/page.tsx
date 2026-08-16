@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { CURRICULUM_ES } from "@/data/curriculum/es";
+import { CURRICULUM_ES, WORLD_TITLES } from "@/data/curriculum/es";
 import type { LessonType } from "@/domain/curriculum/types";
 import {
   completedLessonIds,
@@ -46,24 +46,25 @@ export default function CursoPage() {
           ← Inicio
         </Link>
         <h1 className="mt-2 text-3xl font-bold tracking-tight">Curso</h1>
-        <p className="mt-1 text-ink-600">
-          Mundo 1 — Fila guía
-        </p>
       </header>
 
       <ol className="relative flex flex-col gap-3">
-        {CURRICULUM_ES.map((lesson) => {
+        {CURRICULUM_ES.map((lesson, index) => {
+          const worldTitle =
+            index === 0 || CURRICULUM_ES[index - 1].world !== lesson.world
+              ? (WORLD_TITLES[lesson.world] ?? `Mundo ${lesson.world}`)
+              : null;
           const isCompleted = completed.has(lesson.id);
           const isCurrent = lesson.id === current;
           const unlocked = isLessonUnlocked(CURRICULUM_ES, progress, lesson.id);
           const stars = lessonStars(progress, lesson.id);
 
           const stateStyles = isCurrent
-            ? "border-brand-500 bg-white shadow-md ring-2 ring-brand-500/30"
+            ? "border-brand-500 bg-noche-900 shadow-md ring-2 ring-brand-500/30"
             : isCompleted
               ? "border-brand-100 bg-brand-100/60"
               : unlocked
-                ? "border-brand-100 bg-white"
+                ? "border-brand-100 bg-noche-900"
                 : "border-transparent bg-ink-900/5 opacity-60";
 
           const content = (
@@ -74,7 +75,7 @@ export default function CursoPage() {
                 aria-hidden="true"
                 className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
                   isCompleted
-                    ? "bg-brand-500 text-white"
+                    ? "bg-brand-500 text-noche-950"
                     : isCurrent
                       ? "bg-brand-100 text-brand-700"
                       : "bg-ink-900/10 text-ink-600"
@@ -102,7 +103,7 @@ export default function CursoPage() {
                       key={star}
                       aria-hidden="true"
                       className={
-                        star <= stars ? "text-brand-500" : "text-ink-900/15"
+                        star <= stars ? "text-sol-400" : "text-ink-900/15"
                       }
                     >
                       ★
@@ -111,7 +112,7 @@ export default function CursoPage() {
                 </span>
               )}
               {isCurrent && (
-                <span className="ml-auto rounded-full bg-brand-500 px-3 py-1 text-xs font-semibold text-white">
+                <span className="ml-auto rounded-full bg-brand-500 px-3 py-1 text-xs font-semibold text-noche-950">
                   Continuar
                 </span>
               )}
@@ -125,6 +126,11 @@ export default function CursoPage() {
 
           return (
             <li key={lesson.id}>
+              {worldTitle && (
+                <h2 className="mb-3 mt-6 text-lg font-bold text-ink-900 first:mt-0">
+                  {worldTitle}
+                </h2>
+              )}
               {unlocked ? (
                 <Link
                   href={`/leccion/${lesson.id}`}

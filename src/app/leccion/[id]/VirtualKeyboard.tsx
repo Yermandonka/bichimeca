@@ -30,7 +30,7 @@ export function VirtualKeyboard({
       ? hasError
         ? "border-red-400 bg-red-100 text-red-700 ring-2 ring-red-400"
         : "border-brand-500 bg-brand-100 text-brand-700 ring-2 ring-brand-500"
-      : "border-ink-900/10 bg-white text-ink-600";
+      : "border-ink-900/10 bg-noche-900 text-ink-600";
     return (
       <span
         key={key.char}
