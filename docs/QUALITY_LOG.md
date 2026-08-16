@@ -2,6 +2,15 @@
 
 Auditorías y decisiones importantes, en orden cronológico inverso.
 
+## 2026-08-16 — Pasada de limpieza de gamificación
+
+- `practiceStreak` simplificada: eliminadas dos salidas tempranas
+  redundantes que el bucle principal ya cubría.
+- Página del curso: `lessonStars` se calcula una vez por lección en lugar
+  de dos veces por render.
+- Tests nuevos: racha que cruza el límite de mes y `lessonStars` ignorando
+  sesiones de otras lecciones. Todo al 100 % de cobertura; 143 tests.
+
 ## 2026-08-16 — Pasada de limpieza de la experiencia de lección
 
 - Lógica pura extraída de `LessonRunner.tsx` a `src/domain/engine/aggregate.ts`

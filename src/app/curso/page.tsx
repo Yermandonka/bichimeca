@@ -56,6 +56,7 @@ export default function CursoPage() {
           const isCompleted = completed.has(lesson.id);
           const isCurrent = lesson.id === current;
           const unlocked = isLessonUnlocked(CURRICULUM_ES, progress, lesson.id);
+          const stars = lessonStars(progress, lesson.id);
 
           const stateStyles = isCurrent
             ? "border-brand-500 bg-white shadow-md ring-2 ring-brand-500/30"
@@ -94,16 +95,14 @@ export default function CursoPage() {
               {isCompleted && (
                 <span
                   className="ml-auto text-lg tracking-wide"
-                  aria-label={`${lessonStars(progress, lesson.id)} de 3 estrellas`}
+                  aria-label={`${stars} de 3 estrellas`}
                 >
                   {[1, 2, 3].map((star) => (
                     <span
                       key={star}
                       aria-hidden="true"
                       className={
-                        star <= lessonStars(progress, lesson.id)
-                          ? "text-brand-500"
-                          : "text-ink-900/15"
+                        star <= stars ? "text-brand-500" : "text-ink-900/15"
                       }
                     >
                       ★
