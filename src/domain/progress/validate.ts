@@ -1,4 +1,12 @@
 import type { ProgressData } from "./progress";
+import {
+  isCount,
+  isFiniteNumber,
+  isFractionOrNull,
+  isNonEmptyString,
+  isRecord,
+  isScoreOrNull,
+} from "./guards";
 
 /**
  * Structural validation for progress data coming from storage or an
@@ -12,30 +20,6 @@ export type ValidationResult =
   | { ok: false; error: string };
 
 const fail = (error: string): ValidationResult => ({ ok: false, error });
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function isFiniteNumber(value: unknown): value is number {
-  return typeof value === "number" && Number.isFinite(value);
-}
-
-function isCount(value: unknown): value is number {
-  return isFiniteNumber(value) && value >= 0;
-}
-
-function isFractionOrNull(value: unknown): boolean {
-  return value === null || (isFiniteNumber(value) && value >= 0 && value <= 1);
-}
-
-function isScoreOrNull(value: unknown): boolean {
-  return value === null || (isFiniteNumber(value) && value >= 0 && value <= 100);
-}
-
-function isNonEmptyString(value: unknown): value is string {
-  return typeof value === "string" && value.length > 0;
-}
 
 function validateSession(value: unknown, index: number): string | null {
   if (!isRecord(value)) return `sesión ${index}: no es un objeto`;

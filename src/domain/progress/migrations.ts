@@ -1,5 +1,6 @@
-import { CURRENT_SCHEMA_VERSION, type ProgressData } from "./progress";
-import { validateProgress } from "./validate";
+import { CURRENT_SCHEMA_VERSION } from "./progress";
+import { validateProgress, type ValidationResult } from "./validate";
+import { isFiniteNumber, isRecord } from "./guards";
 
 /**
  * Stepwise schema migrations. Each registry entry migrates data *from* that
@@ -17,20 +18,18 @@ export type MigrationRegistry = Record<number, MigrationStep>;
 /** Real migrations register here as the schema evolves (none yet for v1). */
 export const MIGRATIONS: MigrationRegistry = {};
 
-export type MigrationResult =
-  | { ok: true; data: ProgressData }
-  | { ok: false; error: string };
+export type MigrationResult = ValidationResult;
 
 export function migrateToCurrent(
   raw: unknown,
   registry: MigrationRegistry = MIGRATIONS,
 ): MigrationResult {
-  if (typeof raw !== "object" || raw === null || Array.isArray(raw)) {
+  if (!isRecord(raw)) {
     return { ok: false, error: "El contenido no es un objeto de progreso" };
   }
-  let data = raw as Record<string, unknown>;
+  let data = raw;
   const rawVersion = data.schemaVersion;
-  if (typeof rawVersion !== "number" || !Number.isFinite(rawVersion)) {
+  if (!isFiniteNumber(rawVersion)) {
     return { ok: false, error: "Falta schemaVersion" };
   }
   let version: number = rawVersion;
@@ -51,7 +50,7 @@ export function migrateToCurrent(
     }
     data = step(data);
     const nextVersion = data.schemaVersion;
-    if (typeof nextVersion !== "number" || nextVersion <= version) {
+    if (!isFiniteNumber(nextVersion) || nextVersion <= version) {
       return {
         ok: false,
         error: `La migración desde la versión ${version} no avanzó el esquema`,

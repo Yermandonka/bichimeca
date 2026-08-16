@@ -124,6 +124,74 @@ describe("validateProgress (import safety)", () => {
     };
     expect(validateProgress(impossible).ok).toBe(false);
   });
+
+  it("rejects every corrupted field, one branch at a time", () => {
+    const valid = (): ProgressData =>
+      JSON.parse(
+        JSON.stringify(appendSession(createEmptyProgress(NOW), sampleSession())),
+      ) as ProgressData;
+    const goodKeyStat = {
+      attempts: 10,
+      correct: 9,
+      errors: 1,
+      latencyEwmaMs: 350,
+      accuracyEwma: 0.9,
+      lastPracticedAt: NOW,
+    };
+    const goodBaseline = {
+      recordedAt: NOW,
+      ppm: 24,
+      accuracy: 0.9,
+      errors: 3,
+      consistency: 60,
+    };
+
+    const corruptions: Array<[string, (p: ProgressData) => unknown]> = [
+      ["profile no es objeto", (p) => ({ ...p, profile: "x" })],
+      ["nombre vacío", (p) => ({ ...p, profile: { ...p.profile, name: "" } })],
+      ["apodo no string", (p) => ({ ...p, profile: { ...p.profile, nickname: 7 } })],
+      ["createdAt vacío", (p) => ({ ...p, profile: { ...p.profile, createdAt: "" } })],
+      ["settings no es objeto", (p) => ({ ...p, settings: null })],
+      ["sonido no booleano", (p) => ({ ...p, settings: { ...p.settings, soundEnabled: 1 } })],
+      ["movimiento no booleano", (p) => ({ ...p, settings: { ...p.settings, reducedMotion: "no" } })],
+      ["objetivo negativo", (p) => ({ ...p, settings: { ...p.settings, dailyGoalMinutes: -1 } })],
+      ["sessions no es array", (p) => ({ ...p, sessions: {} })],
+      ["sesión no es objeto", (p) => ({ ...p, sessions: [null] })],
+      ["sesión sin id", (p) => ({ ...p, sessions: [{ ...p.sessions[0], id: "" }] })],
+      ["sesión sin fecha", (p) => ({ ...p, sessions: [{ ...p.sessions[0], completedAt: "" }] })],
+      ["lessonId no string", (p) => ({ ...p, sessions: [{ ...p.sessions[0], lessonId: 3 }] })],
+      ["tipo no string", (p) => ({ ...p, sessions: [{ ...p.sessions[0], exerciseType: 3 }] })],
+      ["precisión fuera de rango", (p) => ({ ...p, sessions: [{ ...p.sessions[0], accuracy: 1.5 }] })],
+      ["consistencia fuera de rango", (p) => ({ ...p, sessions: [{ ...p.sessions[0], consistency: 101 }] })],
+      ["ids de sesión duplicados", (p) => ({ ...p, sessions: [p.sessions[0], { ...p.sessions[0] }] })],
+      ["keyStats no es objeto", (p) => ({ ...p, keyStats: null })],
+      ["tecla no es objeto", (p) => ({ ...p, keyStats: { a: 5 } })],
+      ["tecla con contador negativo", (p) => ({ ...p, keyStats: { a: { ...goodKeyStat, errors: -1 } } })],
+      ["tecla con más aciertos que intentos", (p) => ({ ...p, keyStats: { a: { ...goodKeyStat, correct: 99 } } })],
+      ["tecla con latencia inválida", (p) => ({ ...p, keyStats: { a: { ...goodKeyStat, latencyEwmaMs: -2 } } })],
+      ["tecla con precisión inválida", (p) => ({ ...p, keyStats: { a: { ...goodKeyStat, accuracyEwma: 2 } } })],
+      ["tecla con fecha inválida", (p) => ({ ...p, keyStats: { a: { ...goodKeyStat, lastPracticedAt: 4 } } })],
+      ["baseline no es objeto", (p) => ({ ...p, baseline: "x" })],
+      ["baseline sin fecha", (p) => ({ ...p, baseline: { ...goodBaseline, recordedAt: "" } })],
+      ["baseline con ppm negativa", (p) => ({ ...p, baseline: { ...goodBaseline, ppm: -1 } })],
+      ["baseline sin precisión", (p) => ({ ...p, baseline: { ...goodBaseline, accuracy: null } })],
+      ["baseline con errores negativos", (p) => ({ ...p, baseline: { ...goodBaseline, errors: -1 } })],
+      ["baseline con consistencia inválida", (p) => ({ ...p, baseline: { ...goodBaseline, consistency: 200 } })],
+    ];
+
+    for (const [label, corrupt] of corruptions) {
+      const result = validateProgress(corrupt(valid()));
+      expect(result.ok, label).toBe(false);
+    }
+
+    // Sanity: valid data with keyStats and baseline passes.
+    const complete = {
+      ...valid(),
+      keyStats: { a: goodKeyStat },
+      baseline: goodBaseline,
+    };
+    expect(validateProgress(complete).ok).toBe(true);
+  });
 });
 
 describe("migrateToCurrent", () => {
@@ -176,5 +244,27 @@ describe("migrateToCurrent", () => {
       0: (data) => ({ ...data, schemaVersion: 1 }),
     });
     expect(result.ok).toBe(false);
+  });
+
+  it("rejects content that is not a progress object", () => {
+    expect(migrateToCurrent(null).ok).toBe(false);
+    expect(migrateToCurrent([1, 2]).ok).toBe(false);
+    expect(migrateToCurrent({ schemaVersion: "1" }).ok).toBe(false);
+    expect(migrateToCurrent({ schemaVersion: Number.NaN }).ok).toBe(false);
+  });
+
+  it("fails when a migration step does not advance the schema version", () => {
+    const legacy = {
+      ...JSON.parse(JSON.stringify(createEmptyProgress(NOW))),
+      schemaVersion: 0,
+    };
+    const stuck = migrateToCurrent(legacy, { 0: (data) => data });
+    expect(stuck.ok).toBe(false);
+    if (!stuck.ok) expect(stuck.error).toMatch(/no avanzó/);
+
+    const backwards = migrateToCurrent(legacy, {
+      0: (data) => ({ ...data, schemaVersion: Number.NaN }),
+    });
+    expect(backwards.ok).toBe(false);
   });
 });
