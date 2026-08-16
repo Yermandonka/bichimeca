@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <main className="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center gap-6 px-6 text-center">
@@ -11,9 +13,12 @@ export default function Home() {
       <p className="max-w-md text-lg text-ink-600">
         Aprende a escribir sin mirar el teclado, con precisión y a tu ritmo.
       </p>
-      <p className="rounded-full bg-brand-100 px-4 py-1.5 text-sm font-medium text-brand-700">
-        En construcción — las primeras lecciones llegan pronto
-      </p>
+      <Link
+        href="/curso"
+        className="rounded-full bg-brand-500 px-8 py-3 text-lg font-semibold text-white shadow-md transition hover:bg-brand-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+      >
+        Ir al curso
+      </Link>
     </main>
   );
 }

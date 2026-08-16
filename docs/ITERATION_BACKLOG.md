@@ -7,10 +7,9 @@ Puntuación orientativa: Impacto × Confianza / Esfuerzo (1–5).
 ## P1 — núcleo de aprendizaje
 
 1. ~~Motor de escritura~~ — hecho (modos aprendizaje y test).
-2. **Persistencia en navegador** (5×5/2): adaptador
-   localStorage/IndexedDB sobre el esquema versionado ya implementado en
-   `src/domain/progress/` (validación + migraciones hechas); export/import
-   UI llega con Ajustes.
+2. ~~Persistencia en navegador~~ — hecho (localStorage tras
+   `ProgressStore`; IndexedDB puede sustituirlo detrás de la misma interfaz
+   si el volumen lo pide). Export/import UI llega con Ajustes.
 3. **Experiencia de lección + teclado virtual ES-ISO** (5×4/4): pantalla de
    lección, resaltado de tecla/dedo, pantalla de resultados.
 4. **Currículo por mundos** (5×4/4): capa de contenido data-driven
@@ -35,6 +34,11 @@ Puntuación orientativa: Impacto × Confianza / Esfuerzo (1–5).
 
 ## Hecho
 
+- 2026-08-16 — Persistencia local + mapa de curso: `ProgressStore` sobre
+  localStorage (carga con validación/migración; los datos corruptos nunca se
+  borran), selectores de progresión (completadas/actual/desbloqueo),
+  `ProgressProvider` React, página `/curso` con estados
+  completada/actual/bloqueada y página de lección provisional.
 - 2026-08-16 — Capa de currículo data-driven (`src/domain/curriculum/` +
   `src/data/curriculum/es/`): tipos de lección/ejercicio, validación
   automática (ids/órdenes únicos, máx. 2 teclas nuevas, ejercicios solo con
