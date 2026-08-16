@@ -22,7 +22,7 @@ describe("pressKey", () => {
   });
 
   it("advances within the locked word and reports progress", () => {
-    let state = pressKey(initialLockOn, items, "m").state;
+    const state = pressKey(initialLockOn, items, "m").state;
     const step = pressKey(state, items, "a");
     expect(step.result.kind).toBe("progress");
     expect(step.state.typed).toBe("ma");

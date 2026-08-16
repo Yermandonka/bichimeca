@@ -2,6 +2,20 @@
 
 Auditorías y decisiones importantes, en orden cronológico inverso.
 
+## 2026-08-16 — Pasada de limpieza de dinámicas de juego
+
+- `lockOn.ts` llegó como máquina de estados pura y bien testeada; sin
+  cambios.
+- `gameWordPool`/`gameDifficulty` aceptan ahora `progress: null` (carga
+  pendiente): elimina el literal de dificultad duplicado en ambas páginas
+  de juego y simplifica sus memos. Tests para ambos casos null.
+- Arreglado `prefer-const` en `lockOn.test.ts` (bloqueaba `npm run lint`).
+- Observación (sin cambio): `naves` y `magia` comparten el andamiaje de
+  juego (vidas, reloj de ticks, spawn, contabilidad de pulsaciones) en
+  ~700 líneas de UI; las dinámicas divergen a propósito. Si aparece un
+  tercer juego, conviene extraer un hook común de bucle de juego.
+- 195 tests; todo al 100 % de cobertura.
+
 ## 2026-08-16 — Pasada de limpieza de juegos, texto libre y mundos 4–5
 
 - Buena arquitectura de la entrega: material y dificultad de los juegos en

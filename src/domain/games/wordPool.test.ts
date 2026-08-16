@@ -53,6 +53,10 @@ describe("unlockedKeys", () => {
 });
 
 describe("gameWordPool", () => {
+  it("is empty while progress is still loading (null)", () => {
+    expect(gameWordPool(CURRICULUM_ES, null)).toEqual([]);
+  });
+
   it("is never empty, even for a brand-new learner", () => {
     const pool = gameWordPool(CURRICULUM_ES, createEmptyProgress(NOW));
     expect(pool.length).toBeGreaterThan(0);
@@ -107,6 +111,11 @@ describe("gameDifficulty", () => {
     const difficulty = gameDifficulty(CURRICULUM_ES, progress);
     expect(difficulty.fallMs).toBeGreaterThan(1000);
     expect(Number.isFinite(difficulty.spawnMs)).toBe(true);
+  });
+
+  it("gives the gentlest level while progress is still loading (null)", () => {
+    const difficulty = gameDifficulty(CURRICULUM_ES, null);
+    expect(difficulty).toEqual({ world: 1, fallMs: 9000, spawnMs: 3400, maxItems: 3 });
   });
 
   it("defaults to the gentlest level with an empty curriculum", () => {
