@@ -83,11 +83,37 @@ export const KEYBOARD_ROWS: KeyboardKey[][] = [
 
 export const SPACE_KEY: KeyboardKey = key(" ", "pulgar");
 
+/**
+ * The Shift modifier as a teachable "key". There are two physical Shift
+ * keys; technique dictates using the pinky OPPOSITE to the letter's hand,
+ * which the visual keyboard resolves per character.
+ */
+export const SHIFT_KEY: KeyboardKey = key("⇧", "menique-izq");
+
+/** Characters produced with Shift plus a base key on ISO-ES. */
+export const SHIFTED_CHARS: Record<string, string> = {
+  ";": ",",
+  ":": ".",
+  _: "-",
+};
+
 const KEY_INDEX: Map<string, KeyboardKey> = new Map(
-  [...KEYBOARD_ROWS.flat(), SPACE_KEY].map((entry) => [entry.char, entry]),
+  [...KEYBOARD_ROWS.flat(), SPACE_KEY, SHIFT_KEY].map((entry) => [
+    entry.char,
+    entry,
+  ]),
 );
 
-/** Key producing the given character (case-insensitive), or null. */
+/**
+ * Key producing the given character: case-insensitive, and shifted
+ * punctuation resolves to its base key. Null when not on the base layout.
+ */
 export function keyForChar(char: string): KeyboardKey | null {
-  return KEY_INDEX.get(char.toLowerCase()) ?? null;
+  const base = SHIFTED_CHARS[char] ?? char.toLowerCase();
+  return KEY_INDEX.get(base) ?? null;
+}
+
+/** Whether typing this character requires holding Shift on ISO-ES. */
+export function requiresShift(char: string): boolean {
+  return char in SHIFTED_CHARS || char !== char.toLowerCase();
 }

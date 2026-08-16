@@ -11,6 +11,7 @@ test("typing with spaces advances through a whole lesson and shows results", asy
   page,
 }) => {
   await page.goto("/leccion/w1-l1");
+  await page.getByRole("button", { name: "Empezar a escribir" }).click();
   await expect(page.getByText("Ejercicio 1 de 3")).toBeVisible();
 
   await page.keyboard.type(EXERCISES_W1L1[0], { delay: 20 });
@@ -26,6 +27,7 @@ test("typing with spaces advances through a whole lesson and shows results", asy
 
 test("the space bar alone advances past a space position", async ({ page }) => {
   await page.goto("/leccion/w1-l1");
+  await page.getByRole("button", { name: "Empezar a escribir" }).click();
   await expect(page.getByText("Ejercicio 1 de 3")).toBeVisible();
 
   // Type up to the first space, then press ONLY the space bar.
@@ -41,6 +43,7 @@ test("the space bar alone advances past a space position", async ({ page }) => {
 
 test("errors do not advance and are counted in the results", async ({ page }) => {
   await page.goto("/leccion/w1-l1");
+  await page.getByRole("button", { name: "Empezar a escribir" }).click();
   await expect(page.getByText("Ejercicio 1 de 3")).toBeVisible();
 
   await page.keyboard.type("x", { delay: 20 }); // wrong on purpose
@@ -56,6 +59,7 @@ test("errors do not advance and are counted in the results", async ({ page }) =>
 
 test("completed lessons survive a reload (persistence)", async ({ page }) => {
   await page.goto("/leccion/w1-l1");
+  await page.getByRole("button", { name: "Empezar a escribir" }).click();
   await expect(page.getByText("Ejercicio 1 de 3")).toBeVisible();
   for (const text of EXERCISES_W1L1) {
     await page.keyboard.type(text, { delay: 20 });

@@ -3,7 +3,7 @@ import "./globals.css";
 import { ProgressProvider } from "./providers";
 
 export const metadata: Metadata = {
-  title: "Bichimeca — Mecanografía en español",
+  title: "Bichimeca",
   description:
     "Aprende mecanografía en español con lecciones adaptativas, precisión primero y práctica diaria.",
 };
