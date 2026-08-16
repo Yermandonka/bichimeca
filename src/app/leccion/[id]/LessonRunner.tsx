@@ -267,6 +267,16 @@ export function LessonRunner({ lesson }: { lesson: Lesson }) {
               setSession((current) =>
                 handleBackspace(current, { timeMs: performance.now() }),
               );
+              return;
+            }
+            // Space is handled here because some browsers do not deliver a
+            // usable beforeinput for it in an empty controlled input, and its
+            // default action can scroll the page. It never participates in
+            // dead-key composition, so consuming it at keydown is safe; the
+            // preventDefault also guarantees no duplicate beforeinput.
+            if (event.key === " ") {
+              event.preventDefault();
+              feedChar(" ");
             }
           }}
         />
