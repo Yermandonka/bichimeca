@@ -2,6 +2,13 @@
 
 Auditorías y decisiones importantes, en orden cronológico inverso.
 
+## 2026-08-16 — Pasada de limpieza de consejos del mundo 1
+
+- Entrega de solo datos/documentación/activos (consejos del mundo 1,
+  favicon, spec actualizada); nada que reestructurar.
+- Test de invariante nuevo: toda lección tiene `tip` (la spec lo afirma
+  como característica del currículo). 162 tests; todo al 100 %.
+
 ## 2026-08-16 — Pasada de limpieza de mundos 2–3, tema oscuro y e2e
 
 - Contenido de los mundos 2–3 validado por las puertas existentes: el
