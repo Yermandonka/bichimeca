@@ -123,17 +123,37 @@ function judgeBufferPositions(
   return { cleanPositions: clean, correctedPositions: corrected };
 }
 
-function cloneStats(
+type AttemptResult = { correct: false } | { correct: true; latencyMs: number };
+
+function recordAttempt(
   keyStats: ReadonlyMap<string, KeyStats>,
   key: string,
-): [Map<string, KeyStats>, KeyStats] {
-  const next = new Map(keyStats);
-  const existing = next.get(key);
-  const stats: KeyStats = existing
-    ? { ...existing, latenciesMs: [...existing.latenciesMs] }
-    : { attempts: 0, correct: 0, errors: 0, latenciesMs: [] };
-  next.set(key, stats);
-  return [next, stats];
+  result: AttemptResult,
+): ReadonlyMap<string, KeyStats> {
+  const previous = keyStats.get(key) ?? {
+    attempts: 0,
+    correct: 0,
+    errors: 0,
+    latenciesMs: [],
+  };
+  const updated: KeyStats = {
+    attempts: previous.attempts + 1,
+    correct: previous.correct + (result.correct ? 1 : 0),
+    errors: previous.errors + (result.correct ? 0 : 1),
+    latenciesMs: result.correct
+      ? [...previous.latenciesMs, result.latencyMs]
+      : previous.latenciesMs,
+  };
+  return new Map(keyStats).set(key, updated);
+}
+
+function recordKeystrokeTiming(session: Session, timeMs: number) {
+  return {
+    totalKeystrokes: session.totalKeystrokes + 1,
+    firstEventMs: session.firstEventMs ?? timeMs,
+    lastEventMs: timeMs,
+    keystrokeTimesMs: [...session.keystrokeTimesMs, timeMs],
+  };
 }
 
 export function handleInput(
@@ -152,20 +172,22 @@ function handleLearningInput(
 ): Session {
   const expected = session.text[session.position];
   const readySinceMs = session.readySinceMs ?? event.timeMs;
-  const [keyStats, stats] = cloneStats(session.keyStats, expected);
-  stats.attempts += 1;
+  const correct = event.char === expected;
+  const keyStats = recordAttempt(
+    session.keyStats,
+    expected,
+    correct
+      ? { correct: true, latencyMs: event.timeMs - readySinceMs }
+      : { correct: false },
+  );
 
   const base = {
     ...session,
     keyStats,
-    totalKeystrokes: session.totalKeystrokes + 1,
-    firstEventMs: session.firstEventMs ?? event.timeMs,
-    lastEventMs: event.timeMs,
-    keystrokeTimesMs: [...session.keystrokeTimesMs, event.timeMs],
+    ...recordKeystrokeTiming(session, event.timeMs),
   };
 
-  if (event.char !== expected) {
-    stats.errors += 1;
+  if (!correct) {
     return {
       ...base,
       errors: session.errors + 1,
@@ -174,8 +196,6 @@ function handleLearningInput(
     };
   }
 
-  stats.correct += 1;
-  stats.latenciesMs.push(event.timeMs - readySinceMs);
   const position = session.position + 1;
   return {
     ...base,
@@ -197,19 +217,17 @@ function handleTestInput(
   const positionIndex = session.buffer.length;
   const expected = session.text[positionIndex];
   const readySinceMs = session.readySinceMs ?? event.timeMs;
-  const [keyStats, stats] = cloneStats(session.keyStats, expected);
-  stats.attempts += 1;
-
   const correct = event.char === expected;
+  const keyStats = recordAttempt(
+    session.keyStats,
+    expected,
+    correct
+      ? { correct: true, latencyMs: event.timeMs - readySinceMs }
+      : { correct: false },
+  );
   const erroredPositions = correct
     ? session.erroredPositions
     : new Set(session.erroredPositions).add(positionIndex);
-  if (correct) {
-    stats.correct += 1;
-    stats.latenciesMs.push(event.timeMs - readySinceMs);
-  } else {
-    stats.errors += 1;
-  }
 
   const buffer = [...session.buffer, event.char];
   return {
@@ -219,14 +237,11 @@ function handleTestInput(
     erroredPositions,
     position: buffer.length,
     isComplete: buffer.length === session.text.length,
-    totalKeystrokes: session.totalKeystrokes + 1,
     correctKeystrokes: session.correctKeystrokes + (correct ? 1 : 0),
     errors: session.errors + (correct ? 0 : 1),
     ...judgeBufferPositions(session.text, buffer, erroredPositions),
-    firstEventMs: session.firstEventMs ?? event.timeMs,
-    lastEventMs: event.timeMs,
+    ...recordKeystrokeTiming(session, event.timeMs),
     readySinceMs: event.timeMs,
-    keystrokeTimesMs: [...session.keystrokeTimesMs, event.timeMs],
   };
 }
 
