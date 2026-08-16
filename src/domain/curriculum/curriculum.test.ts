@@ -1,7 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { allowedKeysForLesson, validateCurriculum } from "./validate";
+import { byOrder } from "./ordering";
 import type { Lesson } from "./types";
-import { CURRICULUM_ES } from "@/data/curriculum/es";
+import { CURRICULUM_ES, WORLD_TITLES } from "@/data/curriculum/es";
 
 function lesson(overrides: Partial<Lesson>): Lesson {
   return {
@@ -155,5 +156,21 @@ describe("CURRICULUM_ES (real content)", () => {
     const last = world1[world1.length - 1];
     expect(last.practicedKeys).toContain("f");
     expect(last.practicedKeys).toContain("j");
+  });
+
+  it("has a display title for every world", () => {
+    const worlds = new Set(CURRICULUM_ES.map((l) => l.world));
+    for (const world of worlds) {
+      expect(WORLD_TITLES[world], `mundo ${world}`).toBeTruthy();
+    }
+  });
+
+  it("keeps worlds contiguous in curriculum order (course map headings)", () => {
+    const worldSequence = byOrder(CURRICULUM_ES).map((l) => l.world);
+    for (let i = 1; i < worldSequence.length; i += 1) {
+      expect(worldSequence[i], `posición ${i}`).toBeGreaterThanOrEqual(
+        worldSequence[i - 1],
+      );
+    }
   });
 });
