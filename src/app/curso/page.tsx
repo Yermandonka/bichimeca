@@ -31,8 +31,14 @@ function WorldPath({
   const completed = completedLessonIds(progress);
   const height = lessons.length * ROW_PX;
   const points = lessons.map((_, i) => ({ x: nodeX(i), y: i * ROW_PX + ROW_PX / 2 }));
+  // Smooth S-curves between nodes so the trail reads like a real path.
   const path = points
-    .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`)
+    .map((p, i) => {
+      if (i === 0) return `M ${p.x} ${p.y}`;
+      const prev = points[i - 1];
+      const midY = (prev.y + p.y) / 2;
+      return `C ${prev.x} ${midY}, ${p.x} ${midY}, ${p.x} ${p.y}`;
+    })
     .join(" ");
 
   return (
@@ -43,18 +49,38 @@ function WorldPath({
         viewBox={`0 0 100 ${height}`}
         preserveAspectRatio="none"
       >
+        {/* Road bed, warm edge and dashed center line */}
         <path
           d={path}
           fill="none"
-          stroke="var(--color-brand-100)"
+          stroke="#3d2f24"
+          strokeWidth="46"
+          strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
+        />
+        <path
+          d={path}
+          fill="none"
+          stroke="#6b543d"
+          strokeWidth="38"
+          strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
+        />
+        <path
+          d={path}
+          fill="none"
+          stroke="rgba(246,241,231,0.55)"
           strokeWidth="3"
-          strokeDasharray="1 8"
+          strokeDasharray="10 14"
           strokeLinecap="round"
           vectorEffect="non-scaling-stroke"
         />
       </svg>
 
       {lessons.map((lesson, i) => {
+        const DECOR = ["🌳", "🌼", "🪨", "🌻", "🍄", "🌲", "🦋", "⛰️"];
+        const decor = DECOR[(lesson.order + i) % DECOR.length];
+        const decorX = nodeX(i) > 50 ? nodeX(i) - 34 : nodeX(i) + 34;
         const isCompleted = completed.has(lesson.id);
         const isCurrent = lesson.id === current;
         const unlocked = isLessonUnlocked(CURRICULUM_ES, progress, lesson.id);
@@ -106,11 +132,18 @@ function WorldPath({
         );
 
         return (
-          <div
-            key={lesson.id}
-            className="absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center"
-            style={{ left: `${nodeX(i)}%`, top: i * ROW_PX + ROW_PX / 2 }}
-          >
+          <div key={lesson.id}>
+            <p
+              aria-hidden="true"
+              className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 text-2xl opacity-70"
+              style={{ left: `${decorX}%`, top: i * ROW_PX + ROW_PX / 2 }}
+            >
+              {decor}
+            </p>
+            <div
+              className="absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center"
+              style={{ left: `${nodeX(i)}%`, top: i * ROW_PX + ROW_PX / 2 }}
+            >
             {unlocked ? (
               <Link
                 href={`/leccion/${lesson.id}`}
@@ -127,6 +160,7 @@ function WorldPath({
                 {label}
               </div>
             )}
+            </div>
           </div>
         );
       })}
@@ -151,12 +185,15 @@ export default function CursoPage() {
   );
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-10">
-      <header className="mb-8">
-        <Link href="/" className="text-sm font-medium text-brand-600 hover:underline">
+    <main className="mx-auto min-h-dvh max-w-4xl px-6 py-10">
+      <header className="mb-8 flex items-center justify-between">
+        <h1 className="text-3xl font-black tracking-tight">Curso</h1>
+        <Link
+          href="/"
+          className="rounded-full border-2 border-brand-100 bg-noche-900 px-4 py-1.5 text-sm font-bold text-brand-600 transition hover:border-brand-500"
+        >
           ← Inicio
         </Link>
-        <h1 className="mt-2 text-3xl font-black tracking-tight">Curso</h1>
       </header>
 
       {worlds.map((world) => (
