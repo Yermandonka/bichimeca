@@ -34,6 +34,13 @@ Puntuación orientativa: Impacto × Confianza / Esfuerzo (1–5).
 
 ## Hecho
 
+- 2026-08-16 — Experiencia de lección interactiva (LessonRunner con
+  beforeinput para caracteres compuestos, resultados con métricas y XP,
+  guardado único) + fusión EWMA de estadísticas por tecla.
+- 2026-08-16 — Gamificación básica: estrellas por precisión (1/2/3 con
+  umbrales configurables, calculadas del historial — sin cambio de esquema)
+  y racha de días con gracia de un día; integradas en resultados y mapa de
+  curso; 10 tests.
 - 2026-08-16 — Persistencia local + mapa de curso: `ProgressStore` sobre
   localStorage (carga con validación/migración; los datos corruptos nunca se
   borran), selectores de progresión (completadas/actual/desbloqueo),
