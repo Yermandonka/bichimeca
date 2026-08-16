@@ -158,6 +158,12 @@ describe("CURRICULUM_ES (real content)", () => {
     expect(last.practicedKeys).toContain("j");
   });
 
+  it("has a tip on every lesson (claimed by the product spec)", () => {
+    for (const l of CURRICULUM_ES) {
+      expect(l.tip, l.id).toBeTruthy();
+    }
+  });
+
   it("has a display title for every world", () => {
     const worlds = new Set(CURRICULUM_ES.map((l) => l.world));
     for (const world of worlds) {
