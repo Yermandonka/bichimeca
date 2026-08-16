@@ -1,26 +1,40 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 
 /**
  * Critical lesson flow in a real Chromium browser, including the space bar
- * (regression: space was reported broken in Brave/Chromium).
+ * (regression: space was reported broken in Brave/Chromium). Exercises are
+ * read from the DOM so the tests survive curriculum growth.
  */
 
-const EXERCISES_W1L1 = ["fff jjj fff jjj", "fj fj jf jf fj jf", "fjf jfj ffj jjf fjj jff"];
+async function typeCurrentExercise(page: Page) {
+  const target = page.locator("p[aria-label^='Texto a escribir']");
+  const label = await target.getAttribute("aria-label");
+  const text = label!.replace("Texto a escribir: ", "");
+  await page.keyboard.type(text, { delay: 15 });
+}
+
+async function completeLesson(page: Page) {
+  while (
+    !(await page
+      .getByText("Lección completada")
+      .isVisible()
+      .catch(() => false))
+  ) {
+    await typeCurrentExercise(page);
+  }
+}
 
 test("typing with spaces advances through a whole lesson and shows results", async ({
   page,
 }) => {
   await page.goto("/leccion/w1-l1");
   await page.getByRole("button", { name: "Empezar a escribir" }).click();
-  await expect(page.getByText("Ejercicio 1 de 3")).toBeVisible();
+  await expect(page.getByText(/Ejercicio 1 de \d+/)).toBeVisible();
 
-  await page.keyboard.type(EXERCISES_W1L1[0], { delay: 20 });
-  await expect(page.getByText("Ejercicio 2 de 3")).toBeVisible();
+  await typeCurrentExercise(page);
+  await expect(page.getByText(/Ejercicio 2 de \d+/)).toBeVisible();
 
-  await page.keyboard.type(EXERCISES_W1L1[1], { delay: 20 });
-  await expect(page.getByText("Ejercicio 3 de 3")).toBeVisible();
-
-  await page.keyboard.type(EXERCISES_W1L1[2], { delay: 20 });
+  await completeLesson(page);
   await expect(page.getByText("Lección completada")).toBeVisible();
   await expect(page.getByText("+20 XP")).toBeVisible();
 });
@@ -28,12 +42,13 @@ test("typing with spaces advances through a whole lesson and shows results", asy
 test("the space bar alone advances past a space position", async ({ page }) => {
   await page.goto("/leccion/w1-l1");
   await page.getByRole("button", { name: "Empezar a escribir" }).click();
-  await expect(page.getByText("Ejercicio 1 de 3")).toBeVisible();
+  await expect(page.getByText(/Ejercicio 1 de \d+/)).toBeVisible();
 
-  // Type up to the first space, then press ONLY the space bar.
-  await page.keyboard.type("fff", { delay: 20 });
+  // First exercise is "fff jjj fff jjj": type up to the first space, then
+  // press ONLY the space bar.
+  await page.keyboard.type("fff", { delay: 15 });
   await page.keyboard.press("Space");
-  await page.keyboard.type("jjj", { delay: 20 });
+  await page.keyboard.type("jjj", { delay: 15 });
 
   // 7 of 15 characters done, so index 7 (the second space) is now current.
   // If the space bar had not registered, typing would have stalled at "fff".
@@ -44,26 +59,25 @@ test("the space bar alone advances past a space position", async ({ page }) => {
 test("errors do not advance and are counted in the results", async ({ page }) => {
   await page.goto("/leccion/w1-l1");
   await page.getByRole("button", { name: "Empezar a escribir" }).click();
-  await expect(page.getByText("Ejercicio 1 de 3")).toBeVisible();
+  await expect(page.getByText(/Ejercicio 1 de \d+/)).toBeVisible();
 
-  await page.keyboard.type("x", { delay: 20 }); // wrong on purpose
-  await expect(page.getByText("Ejercicio 1 de 3")).toBeVisible();
+  await page.keyboard.type("x", { delay: 15 }); // wrong on purpose
+  await expect(page.getByText(/Ejercicio 1 de \d+/)).toBeVisible();
 
-  for (const text of EXERCISES_W1L1) {
-    await page.keyboard.type(text, { delay: 20 });
-  }
+  await completeLesson(page);
   await expect(page.getByText("Lección completada")).toBeVisible();
-  const errores = page.locator("dt", { hasText: "Errores" }).locator("xpath=following-sibling::dd");
+  const errores = page
+    .locator("dt", { hasText: "Errores" })
+    .locator("xpath=following-sibling::dd");
   await expect(errores).toHaveText("1");
 });
 
 test("completed lessons survive a reload (persistence)", async ({ page }) => {
   await page.goto("/leccion/w1-l1");
   await page.getByRole("button", { name: "Empezar a escribir" }).click();
-  await expect(page.getByText("Ejercicio 1 de 3")).toBeVisible();
-  for (const text of EXERCISES_W1L1) {
-    await page.keyboard.type(text, { delay: 20 });
-  }
+  await expect(page.getByText(/Ejercicio 1 de \d+/)).toBeVisible();
+
+  await completeLesson(page);
   await expect(page.getByText("Lección completada")).toBeVisible();
 
   await page.goto("/curso");

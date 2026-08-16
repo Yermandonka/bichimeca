@@ -37,22 +37,41 @@ export function LessonRunner({ lesson }: { lesson: Lesson }) {
     createSession({ text: lesson.exercises[0].text, mode: "learning" }),
   );
   const [completed, setCompleted] = useState<CompletedExercise[]>([]);
+  /** "carrera" dynamic: 0..100 energy drained by time, refilled by hits. */
+  const [energy, setEnergy] = useState(100);
   const inputRef = useRef<HTMLInputElement>(null);
   const savedRef = useRef(false);
 
   const isLessonDone = completed.length === lesson.exercises.length;
+
+  // Carrera: the turbo bar drains while typing; it never punishes, it only
+  // invites a steady pace. Correct keys refill it (see feedChar).
+  useEffect(() => {
+    if (lesson.dynamic !== "carrera" || phase !== "typing" || isLessonDone) return;
+    const interval = window.setInterval(() => {
+      setEnergy((value) => Math.max(0, value - 0.9));
+    }, 200);
+    return () => window.clearInterval(interval);
+  }, [lesson.dynamic, phase, isLessonDone]);
 
   const nextLesson = useMemo(
     () => nextLessonAfter(CURRICULUM_ES, lesson.id),
     [lesson.id],
   );
 
-  const feedChar = useCallback((char: string) => {
-    setSession((current) => {
-      const next = handleInput(current, { char, timeMs: performance.now() });
-      return next;
-    });
-  }, []);
+  const feedChar = useCallback(
+    (char: string) => {
+      setSession((current) => {
+        const next = handleInput(current, { char, timeMs: performance.now() });
+        return next;
+      });
+      if (lesson.dynamic === "carrera") {
+        // Refill on any attempt; steady typing keeps the flame alive.
+        setEnergy((value) => Math.min(100, value + 2.2));
+      }
+    },
+    [lesson.dynamic],
+  );
 
   // When the current exercise completes, archive it and start the next one.
   useEffect(() => {
@@ -64,6 +83,7 @@ export function LessonRunner({ lesson }: { lesson: Lesson }) {
     const nextIndex = exerciseIndex + 1;
     if (nextIndex < lesson.exercises.length) {
       setExerciseIndex(nextIndex);
+      setEnergy(100);
       setSession(
         createSession({
           text: lesson.exercises[nextIndex].text,
@@ -113,6 +133,7 @@ export function LessonRunner({ lesson }: { lesson: Lesson }) {
     savedRef.current = false;
     setCompleted([]);
     setExerciseIndex(0);
+    setEnergy(100);
     setSession(createSession({ text: lesson.exercises[0].text, mode: "learning" }));
     inputRef.current?.focus();
   }, [lesson]);
@@ -256,8 +277,99 @@ export function LessonRunner({ lesson }: { lesson: Lesson }) {
 
   const text = lesson.exercises[exerciseIndex].text;
 
+  // Dynamic panels: same pedagogy underneath, more juice on top.
+  let dynamicPanel: React.ReactNode = null;
+  if (lesson.dynamic === "carrera") {
+    dynamicPanel = (
+      <div className="mb-4 rounded-2xl border-2 border-brand-100 bg-noche-900 p-4">
+        <div className="flex items-center justify-between text-sm font-bold">
+          <span>🏁 Carrera turbo</span>
+          <span className={energy > 0 ? "text-sol-400" : "text-ink-400"}>
+            {energy > 0 ? "⚡ ¡Energía viva!" : "Recupera el ritmo"}
+          </span>
+        </div>
+        <div className="mt-2 h-4 overflow-hidden rounded-full bg-noche-950">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-brand-500 to-sol-400 transition-all duration-200"
+            style={{ width: `${energy}%` }}
+          />
+        </div>
+        <p className="mt-1 text-xs text-ink-600">
+          Cada tecla alimenta la llama: escribe con ritmo constante para que no
+          se apague. Sin castigos, solo velocidad.
+        </p>
+      </div>
+    );
+  } else if (lesson.dynamic === "globos") {
+    const tokens = text.split(" ");
+    const tokensDone = session.isComplete
+      ? tokens.length
+      : text.slice(0, session.position).split(" ").length - 1;
+    dynamicPanel = (
+      <div className="mb-4 rounded-2xl border-2 border-brand-100 bg-noche-900 p-4 text-center">
+        <p className="text-sm font-bold">🎈 Revienta un globo por palabra</p>
+        <p className="mt-2 text-3xl tracking-wide">
+          {tokens.map((_, index) => (
+            <span
+              key={index}
+              className={
+                index < tokensDone
+                  ? "anim-pop-in inline-block"
+                  : index === tokensDone
+                    ? "anim-wobble inline-block"
+                    : "inline-block opacity-40"
+              }
+            >
+              {index < tokensDone ? "✨" : "🎈"}
+            </span>
+          ))}
+        </p>
+      </div>
+    );
+  } else if (lesson.dynamic === "jefe") {
+    const totalChars = lesson.exercises.reduce(
+      (acc, exercise) => acc + exercise.text.length,
+      0,
+    );
+    const typedChars =
+      completed.reduce((acc, entry) => acc + entry.summary.correctKeystrokes, 0) +
+      session.position;
+    const health = Math.max(0, 100 - (typedChars / totalChars) * 100);
+    dynamicPanel = (
+      <div className="mb-4 rounded-2xl border-2 border-red-400/40 bg-noche-900 p-4">
+        <div className="flex items-center gap-4">
+          <span
+            className={`text-5xl ${session.currentPositionErrored ? "" : "anim-drift"}`}
+            aria-hidden="true"
+          >
+            🐲
+          </span>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center justify-between text-sm font-bold">
+              <span className="uppercase tracking-wide text-red-300">
+                👑 Combate final
+              </span>
+              <span>{Math.ceil(health)} %</span>
+            </div>
+            <div className="mt-2 h-4 overflow-hidden rounded-full bg-noche-950">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-red-500 to-brand-500 transition-all duration-200"
+                style={{ width: `${health}%` }}
+              />
+            </div>
+            <p className="mt-1 text-xs text-ink-600">
+              Cada tecla correcta le quita energía al dragón. ¡Derrótalo
+              escribiendo!
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <section className="mt-8">
+      {dynamicPanel}
       <div className="mb-4 flex items-center justify-between text-sm text-ink-600">
         <span>
           Ejercicio {exerciseIndex + 1} de {lesson.exercises.length}

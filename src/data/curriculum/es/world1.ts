@@ -22,6 +22,7 @@ export const WORLD_1: Lesson[] = [
       { type: "drill", text: "fff jjj fff jjj" },
       { type: "drill", text: "fj fj jf jf fj jf" },
       { type: "drill", text: "fjf jfj ffj jjf fjj jff" },
+      { type: "drill", text: "jff fjj jjf ffj jfj fjf jf fj jjj" },
     ],
   },
   {
@@ -38,6 +39,7 @@ export const WORLD_1: Lesson[] = [
       { type: "drill", text: "fj jf fj jf fj jf fj jf" },
       { type: "drill", text: "ffj jjf fjj jff fjf jfj" },
       { type: "drill", text: "fjfj jfjf fjjf jffj fjfj" },
+      { type: "drill", text: "fjfj jffj fjjf jfjf jfj fjf jff fjj jjf" },
     ],
   },
   {
@@ -54,6 +56,7 @@ export const WORLD_1: Lesson[] = [
       { type: "drill", text: "ddd kkk ddd kkk" },
       { type: "drill", text: "dk kd dk kd fd jk fd jk" },
       { type: "drill", text: "fdk jkd dfj kjf dkf kdj" },
+      { type: "drill", text: "kdj dkf kjf dfj jkd fdk jk fd kd" },
     ],
   },
   {
@@ -65,11 +68,13 @@ export const WORLD_1: Lesson[] = [
     introducedKeys: [],
     practicedKeys: ["f", "j", "d", "k"],
     xp: 15,
+    dynamic: "globos",
     tip: "Escribe despacio y parejo. La velocidad es hija de la precisión, nunca al revés.",
     exercises: [
       { type: "drill", text: "fjdk dkfj kdjf jfkd fjdk" },
       { type: "drill", text: "fkd jdk fjk dkj kfd jkf" },
       { type: "drill", text: "dfk kjd fdj jkf dkfj fjdk" },
+      { type: "drill", text: "fjdk dkfj jkf fdj kjd dfk kfd dkj fjk" },
     ],
   },
   {
@@ -86,6 +91,7 @@ export const WORLD_1: Lesson[] = [
       { type: "drill", text: "sss lll sss lll" },
       { type: "drill", text: "sl ls sl ls sd lk sd lk" },
       { type: "drill", text: "sdf lkj fds jkl slf ljs" },
+      { type: "drill", text: "ljs slf jkl fds lkj sdf lk sd ls" },
     ],
   },
   {
@@ -102,6 +108,7 @@ export const WORLD_1: Lesson[] = [
       { type: "drill", text: "sdfj lkjd sljk fdsl jkls" },
       { type: "drill", text: "sdf jkl sdf jkl fds lkj" },
       { type: "drill", text: "slk jdf lsd kfj dls kjs" },
+      { type: "drill", text: "kjs dls kfj lsd jdf slk lkj fds jkl" },
     ],
   },
   {
@@ -118,6 +125,7 @@ export const WORLD_1: Lesson[] = [
       { type: "drill", text: "aaa ñññ aaa ñññ" },
       { type: "drill", text: "añ ña añ ña as ñl as ñl" },
       { type: "drill", text: "aña ñasañ asdf ñlkj añsl" },
+      { type: "drill", text: "añsl ñlkj asdf ñasañ aña ñl as ña añ" },
     ],
   },
   {
@@ -129,11 +137,13 @@ export const WORLD_1: Lesson[] = [
     introducedKeys: [],
     practicedKeys: ["a", "s", "d", "f", "j", "k", "l", "ñ"],
     xp: 25,
+    dynamic: "carrera",
     tip: "Tus primeras palabras reales. Léelas enteras antes de escribirlas.",
     exercises: [
       { type: "words", text: "sal las asa alas sala" },
       { type: "words", text: "falda salsa fajas faldas" },
       { type: "words", text: "sal sala alas falda salsa jala" },
+      { type: "words", text: "jala salsa falda alas sala sal faldas fajas asa" },
     ],
   },
   {
@@ -150,6 +160,7 @@ export const WORLD_1: Lesson[] = [
       { type: "drill", text: "ggg hhh ggg hhh" },
       { type: "drill", text: "gh hg gh hg fg jh fg jh" },
       { type: "drill", text: "gaf haj gal hal gah hag" },
+      { type: "drill", text: "hag gah hal gal haj gaf jh fg hg" },
     ],
   },
   {
@@ -166,6 +177,7 @@ export const WORLD_1: Lesson[] = [
       { type: "words", text: "gala gasa hada haga salga" },
       { type: "words", text: "gafas salga jalas hallas" },
       { type: "words", text: "gasas hadas galas faldas hagas" },
+      { type: "words", text: "hagas faldas galas hadas gasas hallas jalas salga gafas" },
     ],
   },
   {
@@ -182,6 +194,7 @@ export const WORLD_1: Lesson[] = [
       { type: "drill", text: "asdf ñlkj gh fjdk slañ" },
       { type: "words", text: "sal gasa hada gafas salsa" },
       { type: "words", text: "alas haga falda salga hadas" },
+      { type: "words", text: "hadas salga falda haga alas salsa gafas hada gasa" },
     ],
   },
   {
@@ -193,11 +206,13 @@ export const WORLD_1: Lesson[] = [
     introducedKeys: [],
     practicedKeys: ["a", "s", "d", "f", "g", "h", "j", "k", "l", "ñ"],
     xp: 40,
+    dynamic: "jefe",
     tip: "Tu primera prueba de dominio. Respira hondo, precisión primero, y a por ella.",
     exercises: [
       { type: "words", text: "sala salsa gasa hada gafas jala" },
       { type: "words", text: "falda salga hagas alas gala dañas" },
       { type: "words", text: "galas hadas gasas fajas hallas sañas" },
+      { type: "words", text: "sañas hallas fajas gasas hadas galas dañas gala alas" },
     ],
   },
 ];

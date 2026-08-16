@@ -24,6 +24,7 @@ export const WORLD_3: Lesson[] = [
       { type: "drill", text: "nj mj jn jm nm mn nm mn" },
       { type: "words", text: "en un no una uno mano mono" },
       { type: "words", text: "menos semana mañana montaña enero lunes" },
+      { type: "words", text: "lunes enero montaña mañana semana menos mono mano uno" },
     ],
   },
   {
@@ -35,6 +36,7 @@ export const WORLD_3: Lesson[] = [
     introducedKeys: [],
     practicedKeys: ["n", "m", "e", "o", "t", "s"],
     xp: 35,
+    dynamic: "carrera",
     tip: "Desde hoy escribes frases de verdad. Lee la frase entera antes de empezar.",
     exercises: [
       { type: "words", text: "tiempo momento persona gente mente siempre mundo segundo" },
@@ -59,6 +61,7 @@ export const WORLD_3: Lesson[] = [
       { type: "drill", text: "cd vf dc fv cv vc cv vc" },
       { type: "words", text: "casa cosa vaso vida cinco once doce" },
       { type: "words", text: "nuevo nueva cuento viento verano cena cine" },
+      { type: "words", text: "cine cena verano viento cuento nueva nuevo doce once" },
     ],
   },
   {
@@ -94,6 +97,7 @@ export const WORLD_3: Lesson[] = [
       { type: "drill", text: "bf za fb az bz zb bz zb" },
       { type: "words", text: "brazo zumo azul cabeza zapato zorro" },
       { type: "words", text: "abrazo bosque bruja blanco bonito bailar" },
+      { type: "words", text: "bailar bonito blanco bruja bosque abrazo zorro zapato cabeza" },
     ],
   },
   {
@@ -111,6 +115,7 @@ export const WORLD_3: Lesson[] = [
       { type: "words", text: "examen taxi sexto sexta exacto extra" },
       { type: "words", text: "texto textos experta explorar exclusiva" },
       { type: "words", text: "el taxi exacto llega al examen sexto sin extra" },
+      { type: "words", text: "extra sin sexto examen al llega exacto taxi el" },
     ],
   },
   {
@@ -122,6 +127,7 @@ export const WORLD_3: Lesson[] = [
     introducedKeys: [],
     practicedKeys: ["z", "x", "c", "v", "b", "n", "m"],
     xp: 40,
+    dynamic: "globos",
     tip: "Lección larga: palabras de verdad, largas y jugosas. Respira y a por ellas.",
     exercises: [
       { type: "words", text: "zanahorias exploradores restaurantes ordenadores elefantes" },
@@ -146,6 +152,7 @@ export const WORLD_3: Lesson[] = [
       { type: "words", text: "una banda toca un vals lento bajo la luna nueva" },
       { type: "words", text: "el mar avanza y vuelve con un ritmo manso y azul" },
       { type: "words", text: "camino a casa cuento coches verdes blancos y negros" },
+      { type: "words", text: "negros blancos verdes coches cuento casa camino azul manso" },
     ],
   },
   {
@@ -175,12 +182,14 @@ export const WORLD_3: Lesson[] = [
     introducedKeys: [],
     practicedKeys: ["z", "x", "c", "v", "b", "n", "m", "ñ", "q", "w"],
     xp: 50,
+    dynamic: "jefe",
     tip: "La gran prueba: todo el alfabeto en frases largas. Precisión primero.",
     exercises: [
       { type: "words", text: "cada mañana el panadero enciende el horno y la calle huele a pan nuevo" },
       { type: "words", text: "mi bicicleta azul vuela por el camino verde hasta la plaza del pueblo" },
       { type: "words", text: "en verano las noches se llenan de conversaciones largas y risas suaves" },
       { type: "words", text: "una zorra curiosa examina el buzon mientras el gato bosteza en la ventana" },
+      { type: "words", text: "ventana la en bosteza gato el mientras buzon examina" },
     ],
   },
 ];

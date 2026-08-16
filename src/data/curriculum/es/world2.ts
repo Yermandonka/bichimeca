@@ -23,6 +23,7 @@ export const WORLD_2: Lesson[] = [
       { type: "drill", text: "ed ik de ki ed ik de ki" },
       { type: "drill", text: "dei ike fej jik lei sei" },
       { type: "words", text: "el es si se le de da di fe" },
+      { type: "words", text: "fe di da de le se si es el" },
     ],
   },
   {
@@ -40,6 +41,7 @@ export const WORLD_2: Lesson[] = [
       { type: "words", text: "salida iglesia helada jefes fiel silla" },
       { type: "words", text: "deja dejas hija hijas liga sigas aldea" },
       { type: "words", text: "la hija del jefe deja las sillas lisas de la iglesia helada" },
+      { type: "words", text: "helada iglesia la de lisas sillas las deja jefe" },
     ],
   },
   {
@@ -57,6 +59,7 @@ export const WORLD_2: Lesson[] = [
       { type: "drill", text: "rf uj fr ju rf uj fr ju" },
       { type: "drill", text: "rue fur jur eru iru ure" },
       { type: "words", text: "risa rusa dura jura eres aire" },
+      { type: "words", text: "aire eres jura dura rusa risa ure iru eru" },
     ],
   },
   {
@@ -74,6 +77,7 @@ export const WORLD_2: Lesson[] = [
       { type: "words", text: "regla reglas jarra sierra guerra figura" },
       { type: "words", text: "aguja agujas reales laurel garras" },
       { type: "words", text: "la figura irreal surge del lugar si sigue la regla de la sierra" },
+      { type: "words", text: "sierra la de regla sigue si lugar del surge" },
     ],
   },
   {
@@ -91,6 +95,7 @@ export const WORLD_2: Lesson[] = [
       { type: "drill", text: "tf yj ft jy tr yu rt uy" },
       { type: "drill", text: "tay yet tuy yut tey yat" },
       { type: "words", text: "tarde tres ya hay rey ley" },
+      { type: "words", text: "ley rey hay ya tres tarde yat tey yut" },
     ],
   },
   {
@@ -102,6 +107,7 @@ export const WORLD_2: Lesson[] = [
     introducedKeys: [],
     practicedKeys: ["e", "i", "r", "u", "t", "y", "a", "s", "l"],
     xp: 30,
+    dynamic: "globos",
     tip: "Lección larga: sacude las manos si te cansas y vuelve a la fila guía.",
     exercises: [
       { type: "words", text: "triste tierra letras salta hasta fiesta siesta tijeras" },
@@ -126,6 +132,7 @@ export const WORLD_2: Lesson[] = [
       { type: "drill", text: "ol pñ lo ñp ol pñ lo ñp" },
       { type: "drill", text: "pol opa pos apo sop opo" },
       { type: "words", text: "sopa ropa peso paso oro oso" },
+      { type: "words", text: "oso oro paso peso ropa sopa opo sop apo" },
     ],
   },
   {
@@ -162,6 +169,7 @@ export const WORLD_2: Lesson[] = [
       { type: "drill", text: "qa ws aq sw qu we qu we" },
       { type: "words", text: "que queso quiero querer quitar aquel" },
       { type: "words", text: "paquete raqueta etiqueta querido kiwi wifi" },
+      { type: "words", text: "wifi kiwi querido etiqueta raqueta paquete aquel quitar querer" },
     ],
   },
   {
@@ -179,6 +187,7 @@ export const WORLD_2: Lesson[] = [
       { type: "words", text: "la raqueta espera a la pelota tras la siesta para el desquite" },
       { type: "words", text: "el equipaje espera hoy la etiqueta dorada del aeropuerto" },
       { type: "words", text: "tu querido loro repite frases raras aquella tarde de julio" },
+      { type: "words", text: "julio de tarde aquella raras frases repite loro querido" },
     ],
   },
   {
@@ -190,11 +199,13 @@ export const WORLD_2: Lesson[] = [
     introducedKeys: [],
     practicedKeys: ["q", "p", "y", "ñ", "o", "i"],
     xp: 30,
+    dynamic: "carrera",
     tip: "Objetivo: cero errores. Ve tan despacio como necesites; la velocidad llegará sola.",
     exercises: [
       { type: "words", text: "pequeño pequeña espeso espesa quieto quieta" },
       { type: "words", text: "yogur juguete pañuelo puñado otoñal risueño" },
       { type: "words", text: "el pequeño potro risueño pasea quieto por el prado espeso" },
+      { type: "words", text: "espeso prado el por quieto pasea risueño potro pequeño" },
     ],
   },
   {
@@ -206,11 +217,13 @@ export const WORLD_2: Lesson[] = [
     introducedKeys: [],
     practicedKeys: ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
     xp: 45,
+    dynamic: "jefe",
     tip: "Prueba de dominio: escribe con calma y deja que el ritmo haga el trabajo.",
     exercises: [
       { type: "words", text: "aquella tarde de agosto el payaso alegre reparte risas y regalos" },
       { type: "words", text: "el tesoro del pirata espera dorado tras la puerta del faro isleño" },
       { type: "words", text: "tu guitarra despierta sola y la yegua salta ligera hasta la sierra" },
+      { type: "words", text: "sierra la hasta ligera salta yegua sola despierta guitarra" },
     ],
   },
 ];

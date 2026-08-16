@@ -24,6 +24,7 @@ export const WORLD_4: Lesson[] = [
       { type: "drill", text: "Dd Kk Ss Ll Aa Ññ" },
       { type: "drill", text: "Fa Ja Da Ka Sa La" },
       { type: "drill", text: "Aja Faja Kala Daña Sala Jaka" },
+      { type: "drill", text: "Jaka Sala Daña Kala Faja Aja La Sa Ka" },
     ],
   },
   {
@@ -41,6 +42,7 @@ export const WORLD_4: Lesson[] = [
       { type: "words", text: "Pablo Mario Sergio Andres Tomas Hugo" },
       { type: "words", text: "Ana y Pablo juegan con Marta en la plaza" },
       { type: "words", text: "Elena visita a Sonia y a Lucia cada verano" },
+      { type: "words", text: "verano cada Lucia Sonia visita Elena plaza la en" },
     ],
   },
   {
@@ -58,6 +60,7 @@ export const WORLD_4: Lesson[] = [
       { type: "sentences", text: "La luna sale despacio sobre el bosque" },
       { type: "sentences", text: "Mi bicicleta nueva vuela por el camino verde" },
       { type: "sentences", text: "Los gatos duermen al sol en la ventana grande" },
+      { type: "sentences", text: "grande ventana la en sol al duermen gatos Los" },
     ],
   },
   {
@@ -69,12 +72,14 @@ export const WORLD_4: Lesson[] = [
     introducedKeys: [],
     practicedKeys: ["⇧", "s", "g", "t", "c", "v"],
     xp: 30,
+    dynamic: "globos",
     tip: "Los lugares también llevan mayúscula. Alterna manos sin prisa: Shift contrario, letra, soltar. El ritmo llega con la repetición.",
     exercises: [
       { type: "words", text: "Madrid Sevilla Granada Toledo Cuenca" },
       { type: "words", text: "Valencia Burgos Salamanca Zamora Soria" },
       { type: "words", text: "El tren sale de Madrid y llega hasta Sevilla" },
       { type: "words", text: "Desde Toledo se ve el rio grande al atardecer" },
+      { type: "words", text: "atardecer al grande rio el ve se Toledo Desde" },
     ],
   },
   {
@@ -86,6 +91,7 @@ export const WORLD_4: Lesson[] = [
     introducedKeys: [],
     practicedKeys: ["⇧", "a", "e", "m", "l", "b"],
     xp: 35,
+    dynamic: "carrera",
     tip: "Lección larga de consolidación. Si notas que miras el teclado en las mayúsculas, frena: mejor lento y a ciegas que rápido mirando.",
     exercises: [
       { type: "sentences", text: "Ana viaja de Granada a Valencia con su hermano Hugo" },
@@ -104,11 +110,13 @@ export const WORLD_4: Lesson[] = [
     introducedKeys: [],
     practicedKeys: ["⇧", "e", "l", "s", "m", "c"],
     xp: 50,
+    dynamic: "jefe",
     tip: "Prueba de dominio: mayúsculas fluidas a dos manos, sin mirar y sin perder la fila guía. Tú mandas en el teclado.",
     exercises: [
       { type: "sentences", text: "Lucia y Tomas cruzan Madrid en bicicleta al amanecer" },
       { type: "sentences", text: "El viento del norte llega frio hasta Burgos en enero" },
       { type: "sentences", text: "Pablo escribe una carta larga para su amiga de Sevilla" },
+      { type: "sentences", text: "Sevilla de amiga su para larga carta una escribe" },
     ],
   },
 ];

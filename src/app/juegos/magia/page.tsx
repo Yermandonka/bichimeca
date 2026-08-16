@@ -18,12 +18,17 @@ import { loadRecord, submitScore } from "@/infrastructure/storage/recordStore";
  * StrictMode double-invocation).
  */
 
+type StarKind = "normal" | "fugaz" | "lunar";
+
 interface Star {
   id: number;
+  kind: StarKind;
   word: string;
   x: number;
   y: number;
   bornAt: number;
+  lifeMs: number;
+  points: number;
 }
 
 interface Sparkle {
@@ -43,6 +48,11 @@ interface World {
   caught: number;
   streak: number;
   keystrokes: { total: number; correct: number };
+  night: number;
+  /** Catches needed to finish the current night. */
+  nightQuota: number;
+  nightCaught: number;
+  interludeUntil: number;
   lastSpawn: number;
   fairy: { x: number; y: number };
 }
@@ -51,6 +61,35 @@ const LIVES = 3;
 const TICK_MS = 60;
 const STREAK_FOR_LIFE = 5;
 const RECORD_KEY = "bichimeca.record.magia";
+
+/** Every normal star of a night shares one look; it changes each night. */
+const NIGHT_EMOJIS = ["🌟", "💫", "🔮", "🎇", "🪄", "🌈"];
+
+function nightEmoji(night: number): string {
+  return NIGHT_EMOJIS[(night - 1) % NIGHT_EMOJIS.length];
+}
+
+function nightQuotaFor(night: number): number {
+  return 6 + night * 2;
+}
+
+function pickKind(night: number): StarKind {
+  const roll = Math.random();
+  if (roll < 0.06 + night * 0.01) return "lunar";
+  if (roll < 0.2 + night * 0.03) return "fugaz";
+  return "normal";
+}
+
+/** Word length rises one step per night; shooting stars stay short. */
+function pickWord(pool: string[], night: number, kind: StarKind): string {
+  const shift = kind === "fugaz" ? -1 : 0;
+  const min = Math.max(2, 1 + night + shift);
+  const max = min + 2;
+  const fit = pool.filter((word) => word.length >= min && word.length <= max);
+  const longest = pool.filter((word) => word.length >= min);
+  const source = fit.length > 0 ? fit : longest.length > 0 ? longest : pool;
+  return source[Math.floor(Math.random() * source.length)];
+}
 
 function freshWorld(): World {
   return {
@@ -62,6 +101,10 @@ function freshWorld(): World {
     caught: 0,
     streak: 0,
     keystrokes: { total: 0, correct: 0 },
+    night: 1,
+    nightQuota: nightQuotaFor(1),
+    nightCaught: 0,
+    interludeUntil: 0,
     lastSpawn: 0,
     fairy: { x: 50, y: 80 },
   };
@@ -91,6 +134,7 @@ export default function MagiaPage() {
 
   const start = useCallback(() => {
     worldRef.current = freshWorld();
+    worldRef.current.interludeUntil = performance.now() + 1600;
     setNewRecord(false);
     setStatus("playing");
   }, []);
@@ -117,6 +161,7 @@ export default function MagiaPage() {
         sparkle.bornAt += pausedFor;
       });
       world.lastSpawn += pausedFor;
+      world.interludeUntil += pausedFor;
       setStatus("playing");
     }
   }, [status]);
@@ -130,9 +175,9 @@ export default function MagiaPage() {
 
       world.sparkles = world.sparkles.filter((s) => now - s.bornAt < 800);
 
-      const faded = world.stars.filter((star) => now - star.bornAt >= lifeMs);
+      const faded = world.stars.filter((star) => now - star.bornAt >= star.lifeMs);
       if (faded.length > 0) {
-        world.stars = world.stars.filter((star) => now - star.bornAt < lifeMs);
+        world.stars = world.stars.filter((star) => now - star.bornAt < star.lifeMs);
         world.lives = Math.max(0, world.lives - faded.length);
         world.streak = 0;
         world.sparkles.push(
@@ -149,18 +194,41 @@ export default function MagiaPage() {
         }
       }
 
+      // Night flow: enough catches and a clear sky start the next night.
+      const inInterlude = now < world.interludeUntil;
+      if (
+        !inInterlude &&
+        world.nightCaught >= world.nightQuota &&
+        world.stars.length === 0
+      ) {
+        world.night += 1;
+        world.nightQuota = nightQuotaFor(world.night);
+        world.nightCaught = 0;
+        world.interludeUntil = now + 2200;
+      }
+
+      const hurry = Math.pow(0.92, world.night - 1);
       const canSpawn =
-        world.stars.length < base.maxItems &&
-        now - world.lastSpawn >= base.spawnMs &&
+        !inInterlude &&
+        world.stars.length < base.maxItems + Math.floor(world.night / 2) &&
+        now - world.lastSpawn >= base.spawnMs * hurry &&
         pool.length > 0;
       if (canSpawn) {
         world.lastSpawn = now;
+        const kind = pickKind(world.night);
+        const life =
+          kind === "fugaz" ? 0.55 : kind === "lunar" ? 0.75 : 1;
+        const mult = kind === "fugaz" ? 2 : kind === "lunar" ? 4 : 1;
+        const word = pickWord(pool, world.night, kind);
         world.stars.push({
           id: idRef.current++,
-          word: pool[Math.floor(Math.random() * pool.length)],
+          kind,
+          word,
           x: 8 + Math.random() * 80,
           y: 12 + Math.random() * 50,
           bornAt: now,
+          lifeMs: lifeMs * hurry * life,
+          points: word.length * 10 * mult,
         });
       }
 
@@ -187,13 +255,24 @@ export default function MagiaPage() {
       if (!star) return;
       world.streak += 1;
       world.caught += 1;
-      world.score += star.word.length * 10 + world.streak * 5;
+      world.nightCaught += 1;
+      world.score += star.points + world.streak * 5;
       world.stars = world.stars.filter((entry) => entry.id !== star.id);
       world.fairy = { x: star.x, y: star.y };
       world.sparkles.push(
         { id: idRef.current++, x: star.x, y: star.y, emoji: "✨", bornAt: now },
         { id: idRef.current++, x: star.x - 4, y: star.y - 4, emoji: "💖", bornAt: now },
       );
+      if (star.kind === "lunar") {
+        world.lives = Math.min(LIVES, world.lives + 1);
+        world.sparkles.push({
+          id: idRef.current++,
+          x: star.x + 5,
+          y: star.y - 5,
+          emoji: "🌙",
+          bornAt: now,
+        });
+      }
       if (world.streak >= STREAK_FOR_LIFE) {
         world.streak = 0;
         world.lives = Math.min(LIVES, world.lives + 1);
@@ -268,15 +347,18 @@ export default function MagiaPage() {
         🌼
       </p>
 
-      <div className="absolute inset-x-0 top-0 z-30 flex items-center justify-between px-5 py-3 text-sm font-bold">
+      <div className="absolute inset-x-0 top-0 z-30 flex items-center justify-between px-6 py-4 text-lg font-bold">
         <div className="flex items-center gap-4">
-          <span className="text-lg">{world.score} pts</span>
+          <span className="text-2xl font-black">{world.score} pts</span>
           <span aria-label={`${world.lives} vidas`}>
             {Array.from({ length: LIVES }, (_, i) =>
               i < world.lives ? "🌸" : "🥀",
             ).join(" ")}
           </span>
-          <span className="rounded-full bg-brand-100 px-2.5 py-0.5 text-xs text-brand-700">
+          <span className="rounded-full bg-brand-100 px-4 py-1.5 text-base text-brand-700">
+            Noche {world.night}
+          </span>
+          <span className="rounded-full bg-brand-100 px-4 py-1.5 text-base text-brand-700">
             Racha ✨ {world.streak}/{STREAK_FOR_LIFE}
           </span>
         </div>
@@ -286,13 +368,22 @@ export default function MagiaPage() {
             <button
               type="button"
               onClick={togglePause}
-              className="rounded-full border-2 border-brand-100 bg-noche-900 px-3 py-1 text-xs font-bold hover:border-brand-500"
+              className="rounded-full border-2 border-brand-100 bg-noche-900 px-5 py-2.5 text-base font-bold hover:border-brand-500"
             >
               {status === "paused" ? "▶ Reanudar" : "⏸ Pausa"}
             </button>
           )}
         </div>
       </div>
+
+      {status === "playing" && now < world.interludeUntil && (
+        <p
+          key={world.night}
+          className="anim-pop-in absolute inset-x-0 top-1/3 z-20 text-center text-5xl font-black text-sol-400"
+        >
+          🌙 ¡Noche {world.night}!
+        </p>
+      )}
 
       {(status === "playing" || status === "paused") && (
         <div
@@ -301,8 +392,16 @@ export default function MagiaPage() {
           className="absolute inset-0"
         >
           {world.stars.map((star) => {
-            const age = Math.min(1, (now - star.bornAt) / lifeMs);
+            const age = Math.min(1, (now - star.bornAt) / star.lifeMs);
             const isTarget = star.id === world.lock.targetId;
+            const emoji =
+              star.kind === "fugaz"
+                ? "🌠"
+                : star.kind === "lunar"
+                  ? "🌙"
+                  : age > 0.66
+                    ? "⭐"
+                    : nightEmoji(world.night);
             return (
               <div
                 key={star.id}
@@ -314,7 +413,7 @@ export default function MagiaPage() {
                 }}
               >
                 <p className={`text-3xl ${isTarget ? "anim-twinkle" : ""}`}>
-                  {age > 0.66 ? "⭐" : "🌟"}
+                  {emoji}
                 </p>
                 <p
                   className={`mt-0.5 rounded-lg px-2 py-0.5 font-mono text-lg font-bold ${
@@ -410,10 +509,14 @@ export default function MagiaPage() {
                 )}
                 <p className="mt-3 text-5xl font-black">{world.score}</p>
                 <p className="text-ink-600">puntos de magia</p>
-                <dl className="mx-auto mt-6 grid max-w-sm grid-cols-2 gap-3 text-center">
+                <dl className="mx-auto mt-6 grid max-w-sm grid-cols-3 gap-3 text-center">
                   <div className="rounded-2xl bg-brand-50 p-3">
                     <dt className="text-xs text-ink-600">Atrapadas</dt>
                     <dd className="text-xl font-bold">{world.caught}</dd>
+                  </div>
+                  <div className="rounded-2xl bg-brand-50 p-3">
+                    <dt className="text-xs text-ink-600">Noche</dt>
+                    <dd className="text-xl font-bold">{world.night}</dd>
                   </div>
                   <div className="rounded-2xl bg-brand-50 p-3">
                     <dt className="text-xs text-ink-600">Precisión</dt>
@@ -426,8 +529,9 @@ export default function MagiaPage() {
                 <h1 className="text-3xl font-black">🧚 Lluvia de Estrellas</h1>
                 <p className="mx-auto mt-3 max-w-md text-ink-600">
                   Las estrellas aparecen en el cielo encantado y se apagan poco
-                  a poco. Escribe su palabra para que el hada vuele a
-                  atraparlas; cinco seguidas sin fallar recuperan una vida. Esc
+                  a poco. Cada noche cambia la constelación, acelera el cielo y
+                  alarga las palabras; las fugaces 🌠 valen doble y la lunar 🌙
+                  regala una vida. Cinco seguidas sin fallar también curan. Esc
                   para pausar. Dificultad: Mundo {base.world}.
                 </p>
               </>

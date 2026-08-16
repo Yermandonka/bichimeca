@@ -24,6 +24,7 @@ export const WORLD_5: Lesson[] = [
       { type: "drill", text: "m, n. m, n. si, no." },
       { type: "words", text: "sal, pan, sol. mar, luz, flor." },
       { type: "sentences", text: "Hoy toca pan, queso y fruta." },
+      { type: "sentences", text: "fruta. queso pan, toca Hoy flor. luz, mar, sol." },
     ],
   },
   {
@@ -41,6 +42,7 @@ export const WORLD_5: Lesson[] = [
       { type: "sentences", text: "Compramos fruta, pan y leche en el mercado." },
       { type: "sentences", text: "Llueve fuera. Dentro, la casa huele a sopa caliente." },
       { type: "sentences", text: "Primero estudia, luego juega. Ese es el trato." },
+      { type: "sentences", text: "trato. el es Ese juega. luego estudia, Primero caliente." },
     ],
   },
   {
@@ -58,6 +60,7 @@ export const WORLD_5: Lesson[] = [
       { type: "sentences", text: "La lista es corta: pan, queso y miel." },
       { type: "sentences", text: "Llueve mucho; mejor salimos luego." },
       { type: "sentences", text: "Trae esto: agua, fruta y un mapa." },
+      { type: "sentences", text: "mapa. un fruta agua, esto: Trae luego. salimos mejor" },
     ],
   },
   {
@@ -69,6 +72,7 @@ export const WORLD_5: Lesson[] = [
     introducedKeys: [],
     practicedKeys: [",", ".", ";", ":", "⇧"],
     xp: 40,
+    dynamic: "carrera",
     tip: "Lección larga: párrafos completos de verdad. Lee la frase entera, respira y escribe con ritmo constante. La vista en la pantalla, siempre.",
     exercises: [
       {
@@ -99,6 +103,7 @@ export const WORLD_5: Lesson[] = [
       { type: "sentences", text: "Zoe guarda tres cosas: valor, calma y humor." },
       { type: "sentences", text: "El buzo baja despacio; el mar, oscuro, le abraza." },
       { type: "sentences", text: "Queda poco, muy poco. La meta ya se ve." },
+      { type: "sentences", text: "ve. se ya meta La poco. muy poco, Queda" },
     ],
   },
   {
@@ -110,6 +115,7 @@ export const WORLD_5: Lesson[] = [
     introducedKeys: [],
     practicedKeys: [",", ".", ";", ":", "⇧"],
     xp: 40,
+    dynamic: "globos",
     tip: "Última lección larga: texto corrido como el de un libro. Ya no piensas en teclas, piensas en palabras. Eso es mecanografiar de verdad.",
     exercises: [
       {
@@ -141,6 +147,7 @@ export const WORLD_5: Lesson[] = [
       { type: "sentences", text: "El examen tiene tres partes: letras, palabras y frases." },
       { type: "sentences", text: "Quince estrellas brillan; la noche es un mapa gigante." },
       { type: "sentences", text: "Mi vecina canta bajito, riega sus flores y saluda al cartero." },
+      { type: "sentences", text: "cartero. al saluda flores sus riega bajito, canta vecina" },
     ],
   },
   {
@@ -152,6 +159,7 @@ export const WORLD_5: Lesson[] = [
     introducedKeys: [],
     practicedKeys: [",", ".", ";", ":", "⇧"],
     xp: 60,
+    dynamic: "jefe",
     tip: "La gran prueba final de esta etapa: frases largas, mayúsculas y puntuación, todo junto. Precisión primero; la velocidad ya vive en tus dedos.",
     exercises: [
       {
