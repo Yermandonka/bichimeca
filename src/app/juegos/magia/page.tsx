@@ -347,18 +347,18 @@ export default function MagiaPage() {
         🌼
       </p>
 
-      <div className="absolute inset-x-0 top-0 z-30 flex items-center justify-between px-5 py-3 text-sm font-bold">
+      <div className="absolute inset-x-0 top-0 z-30 flex items-center justify-between px-6 py-4 text-lg font-bold">
         <div className="flex items-center gap-4">
-          <span className="text-lg">{world.score} pts</span>
+          <span className="text-2xl font-black">{world.score} pts</span>
           <span aria-label={`${world.lives} vidas`}>
             {Array.from({ length: LIVES }, (_, i) =>
               i < world.lives ? "🌸" : "🥀",
             ).join(" ")}
           </span>
-          <span className="rounded-full bg-brand-100 px-2.5 py-0.5 text-xs text-brand-700">
+          <span className="rounded-full bg-brand-100 px-4 py-1.5 text-base text-brand-700">
             Noche {world.night}
           </span>
-          <span className="rounded-full bg-brand-100 px-2.5 py-0.5 text-xs text-brand-700">
+          <span className="rounded-full bg-brand-100 px-4 py-1.5 text-base text-brand-700">
             Racha ✨ {world.streak}/{STREAK_FOR_LIFE}
           </span>
         </div>

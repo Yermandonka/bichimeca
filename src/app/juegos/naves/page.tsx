@@ -368,21 +368,21 @@ export default function NavesPage() {
         <div className="pointer-events-none absolute inset-0 z-20 ring-[12px] ring-inset ring-red-500/40" />
       )}
 
-      <div className="absolute inset-x-0 top-0 z-30 flex items-center justify-between px-5 py-3 text-sm font-bold">
+      <div className="absolute inset-x-0 top-0 z-30 flex items-center justify-between px-6 py-4 text-lg font-bold">
         <div className="flex items-center gap-4">
-          <span className="text-lg">{world.score} pts</span>
+          <span className="text-2xl font-black">{world.score} pts</span>
           <span aria-label={`${world.lives} vidas`}>
             {Array.from({ length: LIVES }, (_, i) =>
               i < world.lives ? "❤️" : "🖤",
             ).join(" ")}
           </span>
-          <span className="rounded-full bg-brand-100 px-2.5 py-0.5 text-xs text-brand-700">
+          <span className="rounded-full bg-brand-100 px-4 py-1.5 text-base text-brand-700">
             Oleada {world.wave}
           </span>
           {world.combo > 1 && (
             <span
               key={world.combo}
-              className="anim-pop-in rounded-full bg-sol-400 px-2.5 py-0.5 text-xs font-black text-noche-950"
+              className="anim-pop-in rounded-full bg-sol-400 px-4 py-1.5 text-base font-black text-noche-950"
             >
               COMBO x{world.combo}
             </span>

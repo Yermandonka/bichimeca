@@ -39,6 +39,13 @@ export interface Lesson {
   exercises: Exercise[];
   /** Short technique/posture advice shown when the lesson starts. */
   tip?: string;
+  /**
+   * Optional in-lesson dynamic that changes how progress is presented:
+   * "carrera" (energy bar refilled by correct keys), "globos" (a balloon
+   * pops per completed word) or "jefe" (boss with health bar). The typing
+   * pedagogy underneath is identical.
+   */
+  dynamic?: "carrera" | "globos" | "jefe";
 }
 
 /** Characters always permitted in exercise text besides learned keys. */
