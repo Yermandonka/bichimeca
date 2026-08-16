@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { use } from "react";
 import { CURRICULUM_ES } from "@/data/curriculum/es";
+import { LessonRunner } from "./LessonRunner";
 
 export default function LeccionPage({
   params,
@@ -16,7 +17,10 @@ export default function LeccionPage({
     return (
       <main className="mx-auto max-w-2xl px-6 py-16 text-center">
         <p className="text-lg text-ink-600">Esta lección no existe.</p>
-        <Link href="/curso" className="mt-4 inline-block font-medium text-brand-600 hover:underline">
+        <Link
+          href="/curso"
+          className="mt-4 inline-block font-medium text-brand-600 hover:underline"
+        >
           Volver al curso
         </Link>
       </main>
@@ -24,25 +28,27 @@ export default function LeccionPage({
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-10">
-      <Link href="/curso" className="text-sm font-medium text-brand-600 hover:underline">
-        ← Curso
-      </Link>
-      <h1 className="mt-2 text-3xl font-bold tracking-tight">{lesson.title}</h1>
-      <p className="mt-4 rounded-xl bg-brand-100 px-4 py-3 text-brand-700">
-        El ejercicio interactivo llega en la próxima iteración. Estos son los
-        textos de práctica de la lección:
-      </p>
-      <ul className="mt-6 flex flex-col gap-3">
-        {lesson.exercises.map((exercise, index) => (
-          <li
-            key={index}
-            className="rounded-xl border border-brand-100 bg-white p-4 font-mono text-lg tracking-wide"
+    <main className="mx-auto max-w-3xl px-6 py-10">
+      <header className="flex items-baseline justify-between">
+        <div>
+          <Link
+            href="/curso"
+            className="text-sm font-medium text-brand-600 hover:underline"
           >
-            {exercise.text}
-          </li>
-        ))}
-      </ul>
+            ← Curso
+          </Link>
+          <h1 className="mt-1 text-2xl font-bold tracking-tight">{lesson.title}</h1>
+        </div>
+        {lesson.introducedKeys.length > 0 && (
+          <p className="text-sm text-ink-600">
+            Teclas nuevas:{" "}
+            <span className="font-mono font-bold text-brand-700">
+              {lesson.introducedKeys.map((key) => key.toUpperCase()).join(" · ")}
+            </span>
+          </p>
+        )}
+      </header>
+      <LessonRunner key={lesson.id} lesson={lesson} />
     </main>
   );
 }
