@@ -32,6 +32,10 @@ describe("ppm (palabras por minuto, netas)", () => {
   it("returns 0 when nothing was typed", () => {
     expect(ppm({ correctChars: 0, durationMs: 60_000 })).toBe(0);
   });
+
+  it("treats negative character counts as 0", () => {
+    expect(ppm({ correctChars: -20, durationMs: 60_000 })).toBe(0);
+  });
 });
 
 describe("rawPpm (velocidad bruta)", () => {
@@ -49,6 +53,10 @@ describe("rawPpm (velocidad bruta)", () => {
 
   it("returns 0 for zero duration", () => {
     expect(rawPpm({ totalChars: 300, durationMs: 0 })).toBe(0);
+  });
+
+  it("treats negative character counts as 0", () => {
+    expect(rawPpm({ totalChars: -300, durationMs: 60_000 })).toBe(0);
   });
 });
 
@@ -68,6 +76,10 @@ describe("accuracy", () => {
   it("never exceeds 1 even with inconsistent inputs", () => {
     expect(accuracy({ correctKeystrokes: 12, totalKeystrokes: 10 })).toBe(1);
   });
+
+  it("never drops below 0 even with inconsistent inputs", () => {
+    expect(accuracy({ correctKeystrokes: -3, totalKeystrokes: 10 })).toBe(0);
+  });
 });
 
 describe("errorRate", () => {
@@ -77,6 +89,11 @@ describe("errorRate", () => {
 
   it("returns null when there is no data", () => {
     expect(errorRate({ errors: 0, totalKeystrokes: 0 })).toBeNull();
+  });
+
+  it("stays clamped to 0..1 with inconsistent inputs", () => {
+    expect(errorRate({ errors: 15, totalKeystrokes: 10 })).toBe(1);
+    expect(errorRate({ errors: -2, totalKeystrokes: 10 })).toBe(0);
   });
 });
 
@@ -108,6 +125,18 @@ describe("consistencyScore (ritmo)", () => {
     const tooFew = Array(MIN_INTERVALS_FOR_CONSISTENCY - 1).fill(200);
     expect(consistencyScore(tooFew)).toBeNull();
     expect(consistencyScore([])).toBeNull();
+  });
+
+  it("produces a score at exactly the minimum number of intervals", () => {
+    const justEnough = Array(MIN_INTERVALS_FOR_CONSISTENCY).fill(200);
+    expect(consistencyScore(justEnough)).toBe(100);
+  });
+
+  it("handles an odd number of intervals (single middle median)", () => {
+    // med = 250, deviations sorted [0,50,50,100,100,150,150] -> mad = 100
+    // score = 100 * (1 - 100/250) = 60
+    const odd = [100, 150, 200, 250, 300, 350, 400];
+    expect(consistencyScore(odd)).toBeCloseTo(60);
   });
 
   it("ignores non-positive intervals instead of producing NaN", () => {
