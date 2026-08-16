@@ -35,6 +35,12 @@ Puntuación orientativa: Impacto × Confianza / Esfuerzo (1–5).
 
 ## Hecho
 
+- 2026-08-16 — Capa de currículo data-driven (`src/domain/curriculum/` +
+  `src/data/curriculum/es/`): tipos de lección/ejercicio, validación
+  automática (ids/órdenes únicos, máx. 2 teclas nuevas, ejercicios solo con
+  teclas ya introducidas — detectó "lago" con "o" no enseñada) y Mundo 1
+  completo (12 lecciones, fila guía progresiva desde F/J con palabras reales
+  en cuanto hay letras); 13 tests.
 - 2026-08-16 — Esquema de progreso versionado (`src/domain/progress/`):
   ProgressData v1 (perfil con nombre/apodo configurables, ajustes, sesiones,
   estadísticas por tecla, baseline inmutable, XP), validación estructural de
