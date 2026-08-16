@@ -2,6 +2,21 @@
 
 Auditorías y decisiones importantes, en orden cronológico inverso.
 
+## 2026-08-16 — Pasada de limpieza del panel de inicio
+
+- `recentAverages` reescrita con un helper `average`: elimina la media
+  duplicada, el cast `as number` y la salida temprana redundante (la lista
+  vacía produce null de forma natural).
+- Test de límite con ventana+1 sesiones y velocidades distintas: mata el
+  mutante `slice(-N)` → `slice(N)`, indistinguible con los datos simétricos
+  del test original. Todo al 100 %; 159 tests.
+- Observación para el coder (sin cambio): la racha compara el día local del
+  navegador (`localDay` en `page.tsx`) con días UTC de `completedAt`
+  (`dayOf` recorta el ISO). Práctica cerca de medianoche local puede caer
+  en el día UTC anterior. La regla «viva hasta ayer» amortigua la mayoría
+  de casos; decidir zona única (todo local o todo UTC) cuando la racha
+  gane visibilidad.
+
 ## 2026-08-16 — Pasada de limpieza del teclado virtual
 
 - El módulo llegó limpio: modelo puro del teclado en dominio, componente
